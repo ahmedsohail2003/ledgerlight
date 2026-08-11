@@ -1,0 +1,514 @@
+[
+  {
+    "case_id": "oag-2024-r1-arrivecan-gcstrategies",
+    "vendor": "GC Strategies Inc. (GCStrategies)",
+    "buyer": "Canada Border Services Agency (CBSA); also PHAC and PSPC",
+    "what": "IT staffing / contracted development resources for the ArriveCAN border app; two-person firm that subcontracted the technical work.",
+    "period": "ArriveCAN contracts ~2020-2023; OAG Report 1 tabled 2024-02-12",
+    "approx_value": "~$19.1M paid to GC Strategies for ArriveCAN, of an OAG-estimated ~$59.5M total app cost (exact total 'impossible to determine' due to poor CBSA records)",
+    "label": "problematic",
+    "red_flag_types": ["sole-source/non-competitive", "missing-documentation", "vendor-shaped-requirements/conflict-of-interest", "invoice-approval-without-deliverable-detail", "inflated-rates"],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG 2024 Report 1 — ArriveCAN", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_oag_202402_01_e_44428.html", "finding": "Non-competitive awards, missing documentation, and disregard for policy in ArriveCAN contracting; GC Strategies received an estimated $19.1M." }
+    ],
+    "matchability_notes": "Distinct vendor name; maps to GC STRATEGIES INC rows in Proactive Disclosure. Prior build matched at HIGH confidence.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "oag-2024-r1-arrivecan-dalian-coradix",
+    "vendor": "Dalian Enterprises Inc. (in joint venture with Coradix Technology Consulting Ltd.)",
+    "buyer": "Canada Border Services Agency (CBSA)",
+    "what": "IT staffing services for ArriveCAN via a Dalian/Coradix joint venture holding preferential PSIB access.",
+    "period": "ArriveCAN contracts ~2020-2023; OAG Report 1 tabled 2024-02-12",
+    "approx_value": "~$7.9M attributed to Dalian for ArriveCAN in the OAG report",
+    "label": "problematic",
+    "red_flag_types": ["sole-source/non-competitive", "missing-documentation", "invoice-approval-without-deliverable-detail", "indigenous-set-aside-misuse", "subcontracting-passthrough"],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG 2024 Report 1 — ArriveCAN", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_oag_202402_01_e_44428.html", "finding": "Dalian was the second-largest ArriveCAN recipient at ~$7.9M; documentation and approval deficiencies found." }
+    ],
+    "matchability_notes": "Both JV partners appear as distinct vendors in PD data. Prior build matched at MEDIUM confidence.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "oag-2025-r4-gcstrategies-government-wide",
+    "vendor": "GC Strategies Inc.",
+    "buyer": "31 federal organizations (audit scope)",
+    "what": "Professional services / IT staffing contracts across the federal government.",
+    "period": "Contracts April 2015 - March 2024; OAG 2025 Report 4 tabled 2025-06-10",
+    "approx_value": "106 contracts, maximum total value $92.7M, ~$64.5M paid (includes the 4 ArriveCAN contracts)",
+    "label": "problematic",
+    "red_flag_types": ["sole-source/non-competitive-without-justification", "missing-documentation", "security-clearance-gaps", "no-evidence-of-work-performed", "value-for-money-not-demonstrated"],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG 2025 Report 4 — Professional Services Contracts with GCStrategies Inc.", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_oag_202506_04_e_44645.html", "finding": "Federal organizations frequently failed to follow procurement rules across 106 GCStrategies contracts; 21% lacked documented security clearances." },
+      { "source_type": "oag_news_release", "title": "OAG news release, 2025-06-10", "url": "https://www.oag-bvg.gc.ca/internet/English/mr_20250610_e_44662.html", "finding": "Summary of government-wide failures in GCStrategies contracting." }
+    ],
+    "matchability_notes": "Same vendor rows as the ArriveCAN cases; trivially matchable.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "oag-2024-r5-mckinsey",
+    "vendor": "McKinsey & Company",
+    "buyer": "20 federal organizations: 10 departments/agencies and 10 Crown corporations",
+    "what": "Professional services: benchmarking, management consulting, and IT consulting.",
+    "period": "Contracts 2011-2023; OAG Report 5 tabled 2024-06-04",
+    "approx_value": "97 contracts totalling $209M awarded (~$200M spent); 69 contracts (71%) non-competitive worth $117.7M max value",
+    "label": "problematic",
+    "red_flag_types": ["sole-source/non-competitive", "standing-offer-misuse", "weak-bid-evaluation", "missing-justification", "value-for-money-not-demonstrated"],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG 2024 Report 5 — Professional Services Contracts (McKinsey)", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_oag_202406_05_e_44492.html", "finding": "Policies frequently disregarded when awarding 97 McKinsey contracts; 71% non-competitive; bid evaluations often insufficient." },
+      { "source_type": "oag_news_release", "title": "OAG news release, 2024-06-04 (Reports 5-7)", "url": "https://www.oag-bvg.gc.ca/internet/English/mr_20240604_e_44509.html", "finding": "9/10 departments and 8/10 Crown corporations failed to follow procurement policy on at least one McKinsey contract." }
+    ],
+    "matchability_notes": "Vendor appears under several name variants (McKinsey & Company, McKinsey & Company Canada). Prior build matched at HIGH confidence.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "oag-2024-r8-ceba-accenture",
+    "vendor": "Accenture (including an Accenture subsidiary)",
+    "buyer": "Export Development Canada (EDC), administering CEBA for the Government of Canada",
+    "what": "Administration, call centre, and IT systems for the CEBA emergency loan program.",
+    "period": "2020 - March 2024 (audited); OAG Report 8 tabled 2024-12-02",
+    "approx_value": "$313M to Accenture (~92% of $342M in CEBA delivery contracts), largely non-competitive",
+    "label": "problematic",
+    "red_flag_types": ["sole-source/non-competitive", "vendor-controlled-scope-and-pricing", "conflict-of-interest", "vendor-lock-in", "weak-oversight"],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG 2024 Report 8 — Canada Emergency Business Account (index of 2024 reports)", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_lpy_e_44640.html", "finding": "Heavy reliance on non-competitive Accenture contracts for CEBA delivery, with the vendor influencing scope and pricing." }
+    ],
+    "matchability_notes": "CAVEAT: EDC is a Crown corporation and its contracts are likely NOT in the Proactive Disclosure dataset — keep as a narrative case; exclude from quantitative eval if unmatched.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "oag-2018-r1-phoenix-ibm",
+    "vendor": "IBM Canada Ltd.",
+    "buyer": "Public Services and Procurement Canada (PSPC)",
+    "what": "Design, customization and implementation of the Phoenix pay system.",
+    "period": "Contract awarded June 2011; Phoenix launched 2016; OAG report tabled 2018-05-29",
+    "approx_value": "Sole-source contract initially $5.7M grew to ~$185M by 2017 through dozens of amendments",
+    "label": "problematic",
+    "red_flag_types": ["sole-source/non-competitive", "amendment-inflation", "scope-reduction-to-fit-budget", "project-oversight-failure"],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG 2018 — Building and Implementing the Phoenix Pay System (OAG reports index)", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_lpt_e_1719.html", "finding": "Phoenix contract grew from $5.7M to ~$185M through amendments amid project-management failures." }
+    ],
+    "matchability_notes": "IBM Canada has hundreds of PD rows; the Phoenix amendment trail is the amendment_inflation showcase. Prior build matched at HIGH confidence.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "oag-2024-r6-sdtc",
+    "vendor": "Sustainable Development Technology Canada (SDTC) — funding recipient ecosystem",
+    "buyer": "Innovation, Science and Economic Development Canada (ISED)",
+    "what": "CONTRIBUTION/GRANT funding for clean technology projects — NOT procurement of goods/services.",
+    "period": "Funding decisions examined in the audit; report tabled 2024-06-04",
+    "approx_value": "$59M awarded to 10 ineligible projects; ~$76M in approvals connected to conflicts of interest (90 COI cases)",
+    "label": "problematic",
+    "red_flag_types": ["conflict-of-interest", "ineligible-recipients", "governance-failure", "weak-federal-monitoring"],
+    "evidence": [
+      { "source_type": "oag_news_release", "title": "OAG 2024 Reports 5-7 news release (Report 6: SDTC)", "url": "https://www.oag-bvg.gc.ca/internet/English/mr_20240604_e_44509.html", "finding": "Significant lapses in SDTC governance: ineligible awards and unmanaged conflicts of interest." }
+    ],
+    "matchability_notes": "OUT OF SCOPE for contract matching: contribution agreements, not procurement. Context case only.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "opo-arrivecan-gcstrategies",
+    "vendor": "GC Strategies Inc.",
+    "buyer": "Canada Border Services Agency (CBSA)",
+    "what": "ArriveCAN contracts: earlier sole-source CBSA contracts, a 2020 PSPC national-security-exception contract, and a competitive contract with criteria favouring the incumbent.",
+    "period": "Contracts 2017/2018-2022; OPO Procurement Practice Review published January 2024",
+    "approx_value": "$13.9M (NSE contract) + ~$25M (competitive contract) among 41 ArriveCAN procurements reviewed",
+    "label": "problematic",
+    "red_flag_types": ["restrictive-criteria-favouring-incumbent", "sole-source-repeat-awards", "national-security-exception-use", "security-requirement-not-met", "bait-and-switch-resource-substitution"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO Procurement Practice Review of ArriveCAN (epa-ppr-01-2024)", "url": "https://opo-boa.gc.ca/praapp-prorev/2024/epa-ppr-01-2024-eng.html", "finding": "Practices inconsistent with policy threatened fairness, openness and transparency; overly restrictive criteria favoured the incumbent; ~76% of listed subcontractor resources performed no work." }
+    ],
+    "matchability_notes": "Same GC Strategies vendor rows.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "opo-arrivecan-dalian-coradix",
+    "vendor": "Dalian Enterprises Inc. and Coradix Technology Consulting Ltd. (JV)",
+    "buyer": "Canada Border Services Agency (CBSA)",
+    "what": "ArriveCAN work under pre-existing professional-services contracts via task authorizations; resource substitution ('bait and switch') documented.",
+    "period": "Contracts/TAs to 2022-12-31; OPO review published January 2024; PSPC suspensions March 2024",
+    "approx_value": "Dalian ~$7.9M for ArriveCAN (OAG figure); Dalian+Coradix reported >$400M combined federal contracts over the prior decade",
+    "label": "problematic",
+    "red_flag_types": ["bait-and-switch-resource-substitution", "task-authorization-misuse", "concentration-of-task-authorizations", "conflict-of-interest", "indigenous-set-aside-non-compliance"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO Procurement Practice Review of ArriveCAN (epa-ppr-01-2024)", "url": "https://opo-boa.gc.ca/praapp-prorev/2024/epa-ppr-01-2024-eng.html", "finding": "Task-authorization practices and resource substitution inconsistent with fair and transparent procurement." }
+    ],
+    "matchability_notes": "JV partners appear individually and as a JV entity in PD data.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "opo-arrivecan-teksystems",
+    "vendor": "TEKsystems Canada Corp.",
+    "buyer": "CBSA (contract run by PSPC)",
+    "what": "Engineering professional-services contract (July 2020, $23.2M) under which ArriveCAN work proceeded via task authorizations.",
+    "period": "Contract awarded July 2020; OPO review published January 2024",
+    "approx_value": "$23.2M",
+    "label": "problematic",
+    "red_flag_types": ["vague-evaluation-criteria", "task-authorization-misuse", "resources-working-without-authorization", "weak-contract-administration"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO Procurement Practice Review of ArriveCAN (epa-ppr-01-2024)", "url": "https://opo-boa.gc.ca/praapp-prorev/2024/epa-ppr-01-2024-eng.html", "finding": "Vague criteria and resources working before authorization under the TEKsystems vehicle." }
+    ],
+    "matchability_notes": "Large national staffing firm; hundreds of PD rows. Prior build matched at HIGH confidence.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "opo-mckinsey-2024",
+    "vendor": "McKinsey & Company",
+    "buyer": "10 federal departments/agencies (review scope)",
+    "what": "OPO Procurement Practice Review of McKinsey contracts, requested by the Minister of Public Services and Procurement.",
+    "period": "Contracts April 2011 - March 2023; OPO report published 2024",
+    "approx_value": "$112.8M reviewed (32 contracts); ~$43M in NMSO call-ups lacking justification",
+    "label": "problematic",
+    "red_flag_types": ["favouritism-perception", "procurement-strategy-altered-for-vendor", "improper-re-evaluation-of-bids", "sole-source-justification-missing", "standing-offer-misuse"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO reports and publications (McKinsey practice review)", "url": "https://opo-boa.gc.ca/rapports-reports/2023-2024/index-eng.html", "finding": "Strategies altered in ways favouring McKinsey; standing-offer call-ups without required justification." }
+    ],
+    "matchability_notes": "Same McKinsey vendor rows.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "opo-pspc-interpreters-2024",
+    "vendor": "37 freelance conference interpreters (individual suppliers)",
+    "buyer": "Public Services and Procurement Canada (PSPC)",
+    "what": "OPO Review of Complaints: administration of contracts for interpretation services.",
+    "period": "Contracts administered 2024; complaints June-July 2024; reports published Dec 2024 onward",
+    "approx_value": "40 individual professional-services contracts",
+    "label": "problematic",
+    "red_flag_types": ["unfair-contract-administration", "coercive-amendment-negotiation", "work-attribution-contrary-to-contract-terms"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO 2024-2025 annual report (interpreter complaint reviews)", "url": "https://opo-boa.gc.ca/rapports-reports/2024-2025/index-eng.html", "finding": "Contract administration and amendment practices unfair to interpreter suppliers." }
+    ],
+    "matchability_notes": "Individual small suppliers; weak matchability by design.",
+    "match": { "match_confidence": "low" }
+  },
+  {
+    "case_id": "opo-ircc-antiracism-consultant-2024",
+    "vendor": "Unnamed winning supplier (anonymized in OPO report)",
+    "buyer": "Immigration, Refugees and Citizenship Canada (IRCC)",
+    "what": "OPO complaint review: acquisition of anti-racism consulting services; unreasonable mandatory criteria.",
+    "period": "Contract awarded 2023-12-06; report ep-rc-07-2024",
+    "approx_value": "$102,500 (taxes excluded)",
+    "label": "problematic",
+    "red_flag_types": ["unreasonable-mandatory-criteria", "barrier-to-competition"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO 2023-2024 annual report (complaint reviews)", "url": "https://opo-boa.gc.ca/rapports-reports/2023-2024/index-eng.html", "finding": "Mandatory criteria found unreasonable and a barrier to competition." }
+    ],
+    "matchability_notes": "Vendor anonymized — corpus/context value only; contract identifiable by buyer+date+value.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "opo-cra-antiracism-training-2024",
+    "vendor": "Unnamed winning supplier (anonymized in OPO report)",
+    "buyer": "Canada Revenue Agency (CRA)",
+    "what": "OPO complaint review: anti-racism training acquisition; wrongful pre-solicitation process.",
+    "period": "Contract awarded 2024-01-16; report ep-rc-08-2024",
+    "approx_value": "$76,000 (taxes excluded)",
+    "label": "mixed",
+    "red_flag_types": ["wrongful-pre-solicitation-process", "misleading-communications-with-supplier", "policy-gap-social-procurement"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO 2023-2024 annual report (complaint reviews)", "url": "https://opo-boa.gc.ca/rapports-reports/2023-2024/index-eng.html", "finding": "Pre-solicitation process deficiencies; supplier communications found misleading." }
+    ],
+    "matchability_notes": "Vendor anonymized — context only.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "opo-esdc-accessibility-2025",
+    "vendor": "Unnamed winning supplier (anonymized in OPO report)",
+    "buyer": "Employment and Social Development Canada (ESDC)",
+    "what": "OPO complaint review: digital accessibility auditing services; improper re-evaluation of bids.",
+    "period": "Contract awarded 2025-02-18; report ep-cr-08-2025",
+    "approx_value": "$9,450 (taxes excluded)",
+    "label": "mixed",
+    "red_flag_types": ["improper-re-evaluation-of-bids", "misleading-debriefing", "deficient-regret-letter"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO 2024-2025 annual report (complaint reviews)", "url": "https://opo-boa.gc.ca/rapports-reports/2024-2025/index-eng.html", "finding": "Re-evaluation and debriefing deficiencies in a small services procurement." }
+    ],
+    "matchability_notes": "Vendor anonymized — context only.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "opo-tc-vessel-disposal-2024",
+    "vendor": "Unnamed winning supplier (anonymized in OPO report)",
+    "buyer": "Transport Canada (under a PSPC vehicle)",
+    "what": "OPO complaint review: vessel disposal services; undisclosed evaluation criteria.",
+    "period": "Contract awarded 2023-10-06; report ep-rc-04-2024",
+    "approx_value": "$74,158.88",
+    "label": "problematic",
+    "red_flag_types": ["undisclosed-evaluation-criteria", "improper-bid-evaluation"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO 2023-2024 annual report (complaint reviews)", "url": "https://opo-boa.gc.ca/rapports-reports/2023-2024/index-eng.html", "finding": "Evaluation used criteria not disclosed in the solicitation." }
+    ],
+    "matchability_notes": "Vendor anonymized — context only.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "opo-dfo-janitorial-2023",
+    "vendor": "Unnamed winning bidder (anonymized in OPO report)",
+    "buyer": "Fisheries and Oceans Canada (DFO)",
+    "what": "OPO complaint review: janitorial services; award to a non-compliant bidder.",
+    "period": "Contract awarded 2023-07-10; report ep-rc-12-2023",
+    "approx_value": "$68,026 (including tax)",
+    "label": "problematic",
+    "red_flag_types": ["award-to-non-compliant-bidder", "mandatory-criterion-unenforceable", "flawed-solicitation-mechanics"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO 2023-2024 annual report (complaint reviews)", "url": "https://opo-boa.gc.ca/rapports-reports/2023-2024/index-eng.html", "finding": "Winning bid did not meet a mandatory criterion that proved unenforceable as written." }
+    ],
+    "matchability_notes": "Vendor anonymized — context only.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "gcs-portfolio-2011-2024",
+    "vendor": "GC Strategies Inc. (predecessor: Coredal Systems Consulting)",
+    "buyer": "Multiple federal departments",
+    "what": "Two-person IT staffing middleman that performed no IT work itself, subcontracting for commissions; suspended then declared ineligible for federal contracting; under RCMP investigation.",
+    "period": "2011-2024 contracts; enforcement actions 2023-2025",
+    "approx_value": "~$107M across 118 contracts since 2011 (comptroller general figure)",
+    "label": "problematic",
+    "red_flag_types": ["supplier_suspension", "supplier_ineligibility_debarment", "pass-through_middleman_commissions", "rcmp_investigation"],
+    "evidence": [
+      { "source_type": "oag_news_release", "title": "OAG news release on GCStrategies audit, 2025-06-10", "url": "https://www.oag-bvg.gc.ca/internet/English/mr_20250610_e_44662.html", "finding": "Government-wide failures in GCStrategies contracting; the firm was subsequently suspended and declared ineligible." }
+    ],
+    "matchability_notes": "Same vendor rows; portfolio-level case.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "gcs-arrivecan-cbsa",
+    "vendor": "GC Strategies Inc.",
+    "buyer": "Canada Border Services Agency (CBSA)",
+    "what": "ArriveCAN contracts; partners found in contempt of Parliament during committee study; evidence the vendor participated in shaping contract requirements.",
+    "period": "2020-2023 contracts; findings/sanctions 2024-2025",
+    "approx_value": "~$19.1M to GC Strategies for ArriveCAN (OAG estimate); ArriveCAN total ~$60M",
+    "label": "problematic",
+    "red_flag_types": ["contempt_of_parliament", "vendor_involvement_in_setting_contract_terms", "cost_overrun", "poor_record_keeping", "rcmp_investigation"],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG 2024 Report 1 — ArriveCAN", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_oag_202402_01_e_44428.html", "finding": "Requirements-shaping involvement and record-keeping failures around GC Strategies' ArriveCAN work." }
+    ],
+    "matchability_notes": "Duplicate-vendor case of the OAG ArriveCAN entry, kept for the parliamentary-findings evidence axis.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "dalian-yeo-dnd-conflict",
+    "vendor": "Dalian Enterprises Inc. (founder/president David Yeo)",
+    "buyer": "Department of National Defence (DND) and others",
+    "what": "IT staffing firm whose founder became a full-time DND public servant while the firm continued holding federal contracts; suspension followed.",
+    "period": "2015-2024 contracts; Yeo at DND Sept 2023-Mar 2024; suspension March 2024",
+    "approx_value": ">$200M to Dalian since 2015 (media compilation); $7.9M for ArriveCAN",
+    "label": "problematic",
+    "red_flag_types": ["conflict_of_interest_employee_contractor", "non_disclosure", "supplier_suspension", "indigenous_procurement_terms_not_met"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO Procurement Practice Review of ArriveCAN (context)", "url": "https://opo-boa.gc.ca/praapp-prorev/2024/epa-ppr-01-2024-eng.html", "finding": "Dalian/Coradix JV practices documented; the founder's DND employment and the March 2024 suspension were widely reported and confirmed by PSPC." }
+    ],
+    "matchability_notes": "Distinct vendor name with hundreds of PD rows.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "coradix-suspension-2024",
+    "vendor": "Coradix Technology Consulting Ltd.",
+    "buyer": "Multiple departments via Dalian-Coradix JV and directly",
+    "what": "Suspended from federal contracting by PSPC in March 2024 alongside JV partner Dalian; contested in litigation.",
+    "period": "JV contracts ~2014-2024; suspension March 2024",
+    "approx_value": "Share of >$400M combined Dalian+Coradix federal work over a decade",
+    "label": "problematic",
+    "red_flag_types": ["supplier_suspension", "non_disclosure", "contested_in_litigation"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO Procurement Practice Review of ArriveCAN (JV context)", "url": "https://opo-boa.gc.ca/praapp-prorev/2024/epa-ppr-01-2024-eng.html", "finding": "JV task-authorization concentration documented; PSPC suspension followed in March 2024." }
+    ],
+    "matchability_notes": "Distinct vendor name. Prior build matched at MEDIUM confidence.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "botler-cbsa-misconduct",
+    "vendor": "GC Strategies Inc.; Dalian Enterprises & Coradix (contract vehicle)",
+    "buyer": "Canada Border Services Agency",
+    "what": "Botler AI founders alerted CBSA to questionable contracting conduct (resume misrepresentation, layered markups) on a vehicle adjacent to ArriveCAN; referred to RCMP.",
+    "period": "2019-2022 contracting events; investigations 2021-2024+",
+    "approx_value": "Botler task was a small component of a larger CBSA contract vehicle",
+    "label": "alleged",
+    "red_flag_types": ["resume_falsification_alleged", "excessive_markups_alleged", "collusion_with_officials_alleged", "rcmp_referral"],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO ArriveCAN review (adjacent vehicle context)", "url": "https://opo-boa.gc.ca/praapp-prorev/2024/epa-ppr-01-2024-eng.html", "finding": "Related contracting vehicles and resource-substitution practices documented; specific Botler allegations remain under investigation." }
+    ],
+    "matchability_notes": "ALLEGED: no final official finding; keep label alleged.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "chca-pedabun-psib-shell",
+    "vendor": "Pedabun 35 Nursing Inc & Canadian Health Care Agency Ltd (JV)",
+    "buyer": "Indigenous Services Canada (ISC)",
+    "what": "An eight-year, ~$160M contract for nursing services to remote Indigenous communities won under the Indigenous set-aside via a JV that audits and testimony described as a shell arrangement.",
+    "period": "8-year PSIB set-aside contract; audit findings and committee testimony 2024",
+    "approx_value": "~$160M (8-year contract); CHCA also ~$131.7M in 30 non-set-aside contracts since 2019-20",
+    "label": "problematic",
+    "red_flag_types": ["indigenous_status_misrepresentation", "shell_joint_venture", "set_aside_abuse", "ignored_rcmp_referral_recommendation"],
+    "evidence": [
+      { "source_type": "parliamentary", "title": "ISC audits / committee testimony on Indigenous procurement set-asides (2024) — see OGGO studies index", "url": "https://www.ourcommons.ca/Committees/en/OGGO", "finding": "Set-aside JV found to route work to a non-Indigenous partner; audit recommended RCMP referral." }
+    ],
+    "matchability_notes": "Both JV partners appear in PD data; prior build linked CHCA at ~24 rows.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "ghi-boissonnault-psib",
+    "vendor": "Global Health Imports Corporation",
+    "buyer": "Government of Canada (pandemic-era bids)",
+    "what": "Medical-supply company that misrepresented Indigenous status in federal bidding; suspended, then declared ineligible.",
+    "period": "Conduct ~2020-2022; suspension Nov 2024; ineligibility Feb 2025 - Feb 2030",
+    "approx_value": "Reporting centred on bids/misrepresentation rather than a large award total",
+    "label": "problematic",
+    "red_flag_types": ["indigenous_status_misrepresentation", "supplier_suspension", "supplier_ineligibility_debarment"],
+    "evidence": [
+      { "source_type": "official", "title": "PSPC Ineligibility and Suspension Policy — public list of sanctioned suppliers", "url": "https://www.tpsgc-pwgsc.gc.ca/ci-if/ci-if-eng.html", "finding": "Global Health Imports suspended (Nov 2024) and subsequently declared ineligible for federal contracting." }
+    ],
+    "matchability_notes": "Small vendor; prior build found 1 PD row.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "mckinsey-professional-services",
+    "vendor": "McKinsey & Company",
+    "buyer": "20 federal organizations audited by OAG; 10 reviewed by OPO",
+    "what": "Combined OAG + OPO + committee findings on McKinsey professional-services contracting.",
+    "period": "2011-2023 contracts; OAG June 2024; OPO 2024; OGGO study 2023-2024",
+    "approx_value": "$209M awarded (97 contracts), ~$200M spent",
+    "label": "problematic",
+    "red_flag_types": ["non_competitive_awards_without_justification", "policy_non_compliance_by_buyers", "value_for_money_not_demonstrated"],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG 2024 Report 5 — Professional Services Contracts", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_oag_202406_05_e_44492.html", "finding": "Frequent disregard of contracting policy across McKinsey awards." }
+    ],
+    "matchability_notes": "Duplicate-vendor rollup of the OAG/OPO McKinsey cases.",
+    "match": { "match_confidence": "high" }
+  },
+  {
+    "case_id": "canadalife-pshcp-administration",
+    "vendor": "The Canada Life Assurance Company",
+    "buyer": "Treasury Board of Canada Secretariat (PSHCP)",
+    "what": "OGGO Report 20 on the troubled changeover of the Public Service Health Care Plan administration from Sun Life to Canada Life.",
+    "period": "Changeover July 1 2023; OGGO study 2023-2024; Report 20 tabled 2024",
+    "approx_value": "Multi-year administrative-services-only contract",
+    "label": "problematic",
+    "red_flag_types": ["contract_performance_failure", "contract_administration_failure", "committee_adverse_report"],
+    "evidence": [
+      { "source_type": "parliamentary", "title": "OGGO committee reports index (Report 20, 44th Parliament)", "url": "https://www.ourcommons.ca/Committees/en/OGGO", "finding": "Committee found serious service failures in the PSHCP changeover under the Canada Life contract." }
+    ],
+    "matchability_notes": "Distinct vendor name; prior build linked ~9-11 rows.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "ghost-it-invoicing-fraud",
+    "vendor": "Unnamed IT subcontractors (three cases; identities not public)",
+    "buyer": "36 federal departments, agencies and Crown corporations",
+    "what": "PSPC referred three cases of suspected IT-subcontractor invoicing fraud (duplicate billing across departments) to the RCMP.",
+    "period": "Alleged conduct pre-2024; referrals announced March 2024",
+    "approx_value": "At least $5M in suspected fraudulent billing",
+    "label": "alleged",
+    "red_flag_types": ["duplicate_billing_across_departments", "invoicing_fraud_alleged", "rcmp_referral"],
+    "evidence": [
+      { "source_type": "official", "title": "PSPC integrity measures (announcements index)", "url": "https://www.canada.ca/en/public-services-procurement.html", "finding": "PSPC announced RCMP referrals for suspected invoicing fraud by IT subcontractors." }
+    ],
+    "matchability_notes": "Unnamed suppliers — context only.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "CLEAN-01",
+    "vendor": "Program-level: 7 vaccine manufacturers under advance purchase agreements",
+    "buyer": "Public Services and Procurement Canada (PSPC) / PHAC",
+    "what": "COVID-19 vaccine procurement via advance purchase agreements. The OAG concluded the procurement responded effectively to the emergency. HARD-NEGATIVE CONTROL: sole-source/urgency heuristics WILL fire on these contracts while the independent label is clean.",
+    "period": "APAs signed 2020; audit covered deliveries to May 2022; report tabled December 2022",
+    "approx_value": "169 million doses paid for between Dec 2020 and May 2022 (per OAG)",
+    "label": "clean",
+    "red_flag_types": [],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG December 2022 — COVID-19 Vaccines (reports index)", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_lpy_e_44640.html", "finding": "Positive conclusion on the vaccine procurement response." }
+    ],
+    "matchability_notes": "Program-level clean label; not a single-vendor link.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "CLEAN-02",
+    "vendor": "Program-level: PPE/medical device suppliers (PSPC emergency buying)",
+    "buyer": "Public Services and Procurement Canada (PSPC)",
+    "what": "Emergency procurement of PPE and medical devices. OAG found PSPC's buying response effective (caveat: the same report criticized PHAC's pre-pandemic stockpile management). Hard-negative control like CLEAN-01.",
+    "period": "March 2020 - early 2021; report tabled May 2021",
+    "approx_value": "Program-level; billions in aggregate PPE spending",
+    "label": "clean",
+    "red_flag_types": [],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG May 2021 — Procuring PPE and medical devices (reports index)", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_lpt_e_1719.html", "finding": "PSPC's emergency buying response assessed positively; PHAC stockpile criticized separately." }
+    ],
+    "matchability_notes": "Program-level clean label.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "CLEAN-03",
+    "vendor": "Program-level: construction/design contractors of the Centre Block rehabilitation",
+    "buyer": "Public Services and Procurement Canada (PSPC)",
+    "what": "OAG found the Centre Block Rehabilitation Program well managed on scope, schedule and cost.",
+    "period": "~2016-17 through 2022; report tabled March 2023",
+    "approx_value": "$4.5-5B total program (2021 estimate, per OAG)",
+    "label": "clean",
+    "red_flag_types": [],
+    "evidence": [
+      { "source_type": "oag_report", "title": "OAG March 2023 — Rehabilitation of Parliament's Centre Block (reports index)", "url": "https://www.oag-bvg.gc.ca/internet/English/parl_lpt_e_1719.html", "finding": "Positive conclusion on program management of scope/schedule/cost." }
+    ],
+    "matchability_notes": "Program-level clean label. Prior build matched key contractors at MEDIUM.",
+    "match": { "match_confidence": "medium" }
+  },
+  {
+    "case_id": "CLEAN-04",
+    "vendor": "Department-level: vendors in scope of NRCan's remediated practices",
+    "buyer": "Natural Resources Canada (NRCan)",
+    "what": "OPO follow-up review rated NRCan's implementation of prior recommendations Satisfactory. SECOND-TIER clean label (remediation attested, not a full clean audit).",
+    "period": "Remediation ~2022-2025; follow-up published 2025",
+    "approx_value": "n/a (practice-level)",
+    "label": "clean",
+    "red_flag_types": [],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO follow-up reviews (2024-2025 annual report)", "url": "https://opo-boa.gc.ca/rapports-reports/2024-2025/index-eng.html", "finding": "Satisfactory implementation of prior practice-review recommendations." }
+    ],
+    "matchability_notes": "Department-level; supports negative sampling for NRCan-period contracts.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "CLEAN-05",
+    "vendor": "Department-level: vendors in scope of NRC's remediated practices",
+    "buyer": "National Research Council Canada (NRC)",
+    "what": "OPO follow-up: intent of all 8 recommendations met. SECOND-TIER clean label; the ORIGINAL 2022 review was critical, so only the post-2022 period qualifies.",
+    "period": "Remediation ~Sept 2022-2025; follow-up published 2025",
+    "approx_value": "n/a (practice-level)",
+    "label": "clean",
+    "red_flag_types": [],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO follow-up reviews (2024-2025 annual report)", "url": "https://opo-boa.gc.ca/rapports-reports/2024-2025/index-eng.html", "finding": "All recommendations implemented in intent." }
+    ],
+    "matchability_notes": "Department-level.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "CLEAN-06",
+    "vendor": "Department-level: vendors in scope of RCMP's remediated practices",
+    "buyer": "Royal Canadian Mounted Police (RCMP)",
+    "what": "OPO follow-up to the 2020-2021 practice review reported complete implementation. WEAKEST clean case — re-verify against the published page before final use.",
+    "period": "Remediation ~2021-2025; follow-up published 2025",
+    "approx_value": "n/a (practice-level)",
+    "label": "clean",
+    "red_flag_types": [],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO follow-up reviews (2024-2025 annual report)", "url": "https://opo-boa.gc.ca/rapports-reports/2024-2025/index-eng.html", "finding": "Complete implementation reported." }
+    ],
+    "matchability_notes": "Department-level; single-source verification — weight lowest.",
+    "match": { "match_confidence": "none" }
+  },
+  {
+    "case_id": "CLEAN-07",
+    "vendor": "Department-level: vendors in scope of IRCC's remediated practices",
+    "buyer": "Immigration, Refugees and Citizenship Canada (IRCC)",
+    "what": "OPO follow-up (April 2025): substantial-to-full implementation of 3 recommendations. NOTE: IRCC also appears in adverse GC Strategies cases — per-contract adverse screening is mandatory before sampling IRCC negatives.",
+    "period": "Remediation ~2021-2025; follow-up published April 2025",
+    "approx_value": "n/a (practice-level)",
+    "label": "clean",
+    "red_flag_types": [],
+    "evidence": [
+      { "source_type": "opo_review", "title": "OPO follow-up reviews (2024-2025 annual report)", "url": "https://opo-boa.gc.ca/rapports-reports/2024-2025/index-eng.html", "finding": "Substantial-to-full implementation of prior recommendations." }
+    ],
+    "matchability_notes": "Department-level.",
+    "match": { "match_confidence": "none" }
+  }
+]
