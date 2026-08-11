@@ -1,0 +1,7 @@
+{
+  "name": "ledgerlight",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AI-assisted oversight of real Canadian public procurement data",
+  "workspaces": ["server", "web"]
+}

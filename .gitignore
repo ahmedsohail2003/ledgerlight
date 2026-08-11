@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.local
+dist/
+coverage/
+data/raw/
+*.csv
+.DS_Store
+data/corpus/*.html

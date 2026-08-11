@@ -1,0 +1,18 @@
+[
+  {
+    "chunk_id": "THRESH-gcr-s6b",
+    "doc": "Government Contracts Regulations (SOR/87-402)",
+    "section_ref": "section 6(b)",
+    "title": "Sole-source dollar ceilings for the bid-solicitation exception",
+    "text": "Under section 6(b), a contracting authority may enter into a contract without soliciting bids where the estimated expenditure does not exceed $25,000 for a goods contract; $100,000 for a contract for architectural, engineering or other services related to the planning, design, preparation or supervision of a construction, repair or restoration of a work; or $40,000 for any other contract. A cluster of awards to the same supplier that each sit just below one of these ceilings is a contract-splitting red flag.",
+    "source_url": "https://laws-lois.justice.gc.ca/eng/regulations/SOR-87-402/FullText.html"
+  },
+  {
+    "chunk_id": "THRESH-trade-agreements",
+    "doc": "Curated summary — trade-agreement tendering thresholds",
+    "section_ref": "CFTA / CETA / WTO-AGP",
+    "title": "Competitive-tendering thresholds under trade agreements",
+    "text": "Canadian federal procurements at or above the applicable trade-agreement threshold must generally be openly and competitively tendered. The Canadian Free Trade Agreement (CFTA) sets goods and services thresholds for federal entities that are periodically adjusted; CETA and the WTO Agreement on Government Procurement set parallel thresholds for covered entities. Award values that repeatedly land just below the applicable threshold, or non-competitive awards above it without a documented limited-tendering reason, warrant review. This is a curated summary; verify the current threshold values against the official Treasury Board contracting policy notices.",
+    "source_url": "https://www.cfta-alec.ca/procurement-thresholds/"
+  }
+]
