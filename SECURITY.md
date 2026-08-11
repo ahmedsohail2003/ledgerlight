@@ -79,7 +79,7 @@ a missing key can never trigger a network call (`gemini.ts` `hasApiKey`).
 | A03 Injection | ✅ | 100% parameterized SQL; Zod on every body; React escaping; prompt-injection defenses above |
 | A04 Insecure design | ✅ | Human-in-the-loop by design; append-only audit; deterministic fallback; abuse cases documented here |
 | A05 Security misconfiguration | ✅ | helmet with explicit same-origin CSP, `frame-ancestors 'none'`, nosniff; `x-powered-by` disabled; JSON size cap |
-| A06 Vulnerable components | ⚠️ | Small, current dependency set; **no automated scanning in CI yet** (G-5) |
+| A06 Vulnerable components | ✅ | Small, current dependency set; CI runs `npm audit` (fails on high/critical) plus a full-history secret scan on every push (`.github/workflows/ci.yml`) |
 | A07 Auth failures | ⚠️ | Login rate-limited 10/min; generic error on bad credentials; no MFA/lockout (G-2) |
 | A08 Data integrity failures | ✅ | The core feature: grounding validation + provenance + append-only audit; eval re-audits stored briefs |
 | A09 Logging failures | ✅ | Structured audit_log for every security-relevant event; rejection history persisted per investigation |
@@ -89,19 +89,26 @@ a missing key can never trigger a network call (`gemini.ts` `hasApiKey`).
 
 - **Identify**: data classification + trust boundaries above; gold-set/data provenance documented in `docs/research/`.
 - **Protect**: RBAC, least-privilege DB identities (admin/app/ro), secrets hygiene, CSP, rate limits, input validation.
-- **Detect**: grounding validator (integrity violations surface as rejections), eval harness re-audit, audit log.
+- **Detect**: grounding validator (integrity violations surface as rejections), eval harness re-audit, audit log, CI dependency + secret scanning.
 - **Respond**: fallback mode keeps service defensible under model failure; review board routes contested flags to humans.
 - **Recover**: G-6 — no tested backup/restore yet; MySQL dump strategy needed for prod.
 
-## Gaps (accepted for local demo; ranked)
+## Residual risk (scoped, ranked)
 
-| # | Gap | Remediation path |
+This is a deliberate risk register, not a to-do list. Each item below is a
+conscious scoping decision for a **local, single-instance demo over public
+data**, with the condition that would change the answer. Closing all of them
+would mean standing up an identity provider, Redis, and write-once log storage
+for a portfolio project — the wrong trade. Items are closed when the fix is
+cheap and real (see G-5, now shipped).
+
+| # | Residual risk | Decision & trigger to revisit |
 |---|---|---|
-| G-1 | No TLS on the local demo | Terminate TLS at the edge (App Runner/CloudFront) in the AWS deployment; HSTS already shipped by helmet |
-| G-2 | No MFA, no account lockout, demo passwords | Real IdP (Cognito/Entra) before any real analyst uses it |
-| G-3 | JWT in localStorage → XSS-readable | CSP is the compensating control; move to httpOnly SameSite cookies + CSRF token if cookie auth is adopted |
-| G-4 | Rate limiter is in-memory | Redis-backed store for multi-instance deployments |
-| G-5 | No dependency/secret scanning in CI | Add `npm audit` + secret-scan job |
-| G-6 | Audit log append-only only at the grant layer; no backups | Ship logs to write-once storage (S3 object lock); scheduled dumps + restore test |
-| G-7 | Vendor names queried are visible to the LLM provider | Acceptable (public data); document in any privacy review |
-| G-8 | Demo credentials documented for reviewers | Rotate/remove before any non-demo exposure |
+| G-1 | No TLS on the local demo | **Architecturally answered.** App Runner terminates HTTPS in the Terraform deployment and helmet already sends HSTS; TLS on a localhost demo would be theatre. |
+| G-2 | No MFA; no per-account lockout; seeded demo passwords | **Accepted.** The 10 req/min login limiter blunts brute force, and the only accounts are two demo identities over public data. Trigger: any real analyst account → federate to a real IdP (Cognito/Entra) and add per-account lockout. |
+| G-3 | JWT in `localStorage` (readable by XSS) | **Accepted trade, not an oversight.** httpOnly cookies would resist XSS but require CSRF defences — trading one attack class for another. The same-origin CSP (`script-src 'self'`, no inline scripts) is the compensating control. Trigger: adopting cookie auth → add SameSite + CSRF tokens together. |
+| G-4 | Rate limiter is in-process memory | **Accepted.** Correct for one instance; a shared store would be premature. Trigger: >1 App Runner instance → Redis-backed store. |
+| G-5 | ~~No dependency or secret scanning in CI~~ | ✅ **Closed.** CI now runs four gates on every push: `npm audit --audit-level=high`; an assertion that no `.env`, CSV, or `node_modules` path exists anywhere in history; a credential-shape scan (Google/AWS keys, private-key blocks) across every commit; and a check that secret-named variables are never assigned literals. Adding the audit immediately surfaced a **critical and a high** advisory in the dev toolchain (vitest/vite), fixed by upgrading to `vitest@4` and `vite@8` — now **0 vulnerabilities**. The scans are self-contained rather than a third-party action, so the pipeline cannot fail for reasons unrelated to this repository; both were verified against planted test secrets before shipping. |
+| G-6 | Audit log is append-only by DB grant; no backups or off-box copy | **Accepted for local.** A DB admin could still rewrite history. RDS backup retention is already set in Terraform. Trigger: production → ship the audit log to S3 with Object Lock and test a restore. |
+| G-7 | Vendor names in queries are visible to the LLM provider | **Accepted.** Everything sent is already-published open data; no personal or non-public information exists in the system. Trigger: ingesting any non-public source → re-run this assessment first. |
+| G-8 | Demo credentials are documented for reviewers | **Intentional** so the demo is reproducible. Trigger: any non-demo exposure → rotate and remove from docs. |

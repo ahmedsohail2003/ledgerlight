@@ -13,6 +13,20 @@ A draft that breaks any rule is mechanically rejected and re-prompted with the e
 
 Every flag is framed as an *indicator warranting review*, never an accusation — and nothing becomes "substantiated" without a human analyst recording a written justification on the review board.
 
+## See it working
+
+![Ledgerlight integrity brief — every figure carries its source reference, the sole-source flag cites Government Contracts Regulations s.6, and each sentence is colour-coded by provenance](docs/demo/ledgerlight-brief.gif)
+
+*An integrity brief for GC Strategies, generated from the live dataset. Green = stated directly from source rows, blue = derived from a fired indicator, amber = model inference (which may carry no figures at all). `⚖ section 6` links to the actual regulation.*
+
+**Full walkthrough:** [`docs/demo/ledgerlight-demo.mp4`](docs/demo/ledgerlight-demo.mp4) (31s, captioned — sign-in → vendor search → brief → review board → metrics)
+
+| Vendor search over 1.3M contracts | Human-in-the-loop review board |
+|---|---|
+| ![Vendor search results showing Dalian Enterprises with 900+ contracts](docs/samples/search.png) | ![Kanban review board with cases in new, substantiated and dismissed columns](docs/samples/kanban.png) |
+| **Live agent & rule metrics** | **Dark mode** |
+| ![Metrics dashboard showing 0.0% hallucinated figures and findings per indicator](docs/samples/metrics.png) | ![The same integrity brief rendered in dark mode](docs/samples/brief-dark.png) |
+
 ## Why this exists
 
 Canada's procurement scandals (ArriveCAN, the McKinsey contracts, Phoenix) were surfaced by auditors doing months of manual cross-referencing. The data to spot the patterns — sole-source codes, bid counts, amendment trails — is public. Ledgerlight is an exploration of what responsible AI tooling for that oversight work looks like: deterministic rules for detection, an LLM only for narration, and a validation layer that makes the LLM's failure modes structurally impossible rather than merely unlikely.
@@ -72,7 +86,7 @@ npm run api --workspace @ledgerlight/server   # http://localhost:8080
 - [`docs/research/FEASIBILITY.md`](docs/research/FEASIBILITY.md) — the gold-set research, data-quality gotchas, negative-sampling protocol
 - [`infra/README.md`](infra/README.md) — AWS architecture, one-command deploy, cost table
 - [`docs/eval/`](docs/eval/) — machine-written evaluation reports
-- [`docs/demo/`](docs/demo/) — screenshots and walkthrough
+- [`docs/demo/`](docs/demo/) and [`docs/samples/`](docs/samples/) — walkthrough recording and screenshots
 
 ## Limitations (read before quoting numbers)
 

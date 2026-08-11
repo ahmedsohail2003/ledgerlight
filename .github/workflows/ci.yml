@@ -28,3 +28,67 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build --workspace @ledgerlight/web
+
+  # Supply-chain and secret hygiene. Closes SECURITY.md G-5: dependency and
+  # secret scanning run on every push rather than being a documented gap.
+  # The gates here are deliberately self-contained (no third-party action) so
+  # the pipeline cannot go red for reasons unrelated to this repository.
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: a leaked credential stays dangerous after the commit
+          # that removed it, so the scan must see every commit, not just the tip.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Dependency audit (fails on high or critical)
+        run: npm audit --audit-level=high
+
+      - name: Forbidden paths must never appear in history
+        run: |
+          set -euo pipefail
+          # .env holds live credentials; data/raw holds a ~600MB dataset that
+          # must stay out of git. Checked across ALL history, not just HEAD.
+          hits="$(git log --all --name-only --pretty=format: \
+                  | sort -u | sed '/^$/d' \
+                  | grep -E '(^|/)\.env$|\.csv$|(^|/)node_modules/' || true)"
+          if [ -n "$hits" ]; then
+            echo "::error::Forbidden path found in git history:"; echo "$hits"; exit 1
+          fi
+          echo "OK: no .env, CSV, or node_modules anywhere in history."
+
+      - name: Credential-shaped strings must not exist in any commit
+        run: |
+          set -euo pipefail
+          # Unambiguous credential shapes: Google/Gemini API keys, AWS access
+          # key ids, and private key blocks. Applied to every file type.
+          shapes='AIza[0-9A-Za-z_-]{35}|AQ\.[A-Za-z0-9_-]{30,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+          if git grep -nIE "$shapes" $(git rev-list --all) -- \
+               ':!.github/workflows/ci.yml' > /tmp/shape-hits.txt 2>/dev/null; then
+            echo "::error::Credential-shaped string found in history:"
+            cut -c1-160 /tmp/shape-hits.txt | head -20; exit 1
+          fi
+          echo "OK: no API-key or private-key shapes in any commit."
+
+      - name: Secret-named variables must not be assigned literals
+        run: |
+          set -euo pipefail
+          # Flags `SECRET_NAME = <literal>`. Excludes Terraform (which assigns
+          # *references* like var.gemini_api_key by design — that is the correct
+          # pattern, not a leak), .env.example (placeholders), and prose in .md.
+          assigns='(GEMINI_API_KEY|JWT_SECRET|DB_PASSWORD|DB_ADMIN_PASSWORD|DB_RO_PASSWORD|AWS_SECRET_ACCESS_KEY)[[:space:]]*[=:][[:space:]]*["'"'"']?[A-Za-z0-9/+._-]{12,}'
+          # `${VAR:-default}` reads from the environment rather than hardcoding,
+          # so substitution lines are filtered out of the results.
+          hits="$(git grep -nIE "$assigns" $(git rev-list --all) -- \
+                    ':!*.tf' ':!*.env.example' ':!*.md' ':!.github/workflows/ci.yml' \
+                  2>/dev/null | grep -vE '\$\{' || true)"
+          if [ -n "$hits" ]; then
+            echo "::error::Secret-named variable assigned a literal value:"
+            echo "$hits" | cut -c1-160 | head -20; exit 1
+          fi
+          echo "OK: no hardcoded credential assignments in any commit."

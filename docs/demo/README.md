@@ -1,21 +1,24 @@
 # Demo
 
-**`ledgerlight-demo.webm`** — a captioned screen recording of the running app:
-sign in → search real vendors (Dalian: 900+ contracts) → a grounded integrity
-brief with a clause-linked regulation citation → the human-in-the-loop review
-board → live metrics (0.0% hallucinated figures, audited).
+Captured from the live local stack (Express + MySQL holding 1,313,396 real
+contract rows) with Playwright.
 
-Recorded against the live local stack (Express + MySQL with 1.31M real
-contract rows) with Playwright. Stills in `../samples/`:
-
-| | |
+| File | What it is |
 |---|---|
-| `search.png` | Vendor search over the official dataset |
-| `brief-gc-strategies.png` | Grounded brief — figures trace to refs; the sole-source flag cites GCR s.6 |
-| `brief-dark.png` | Same brief, dark mode |
-| `kanban.png` | Review board (decision notes required for verdicts) |
-| `metrics.png` | Live agent + rule metrics |
+| `ledgerlight-brief.gif` | 8s loop of the integrity brief — the provenance colours, evidence refs, and the clause-linked regulation citation. Used as the README hero (GIFs autoplay inline on GitHub). |
+| `ledgerlight-demo.mp4` | Full 31s captioned walkthrough: sign-in → vendor search → brief → review board → metrics. H.264, plays in any browser. |
+| `ledgerlight-demo.webm` | Playwright's original VP8 recording (source for the two above). |
 
-Briefs in this recording come from the deterministic fallback path (no LLM
-key configured at capture time) — which is itself the demo of graceful
-degradation: identical grounding guarantees, zero free-form text.
+Stills live in [`../samples/`](../samples/): `search.png`,
+`brief-gc-strategies.png`, `brief-dark.png`, `kanban.png`, `metrics.png`, plus
+`brief-gc-strategies.md` (the same brief as text).
+
+> **On inline video:** GitHub does not play video files referenced by relative
+> path in a README — they render as links. That is why the hero is a GIF. To get
+> an inline player, drag `ledgerlight-demo.mp4` into a GitHub issue or release
+> and use the resulting `user-images.githubusercontent.com` URL.
+
+> **On the briefs shown:** these come from the deterministic fallback path (no
+> LLM credits at capture time), which is itself the graceful-degradation demo —
+> identical grounding guarantees, zero free-form generation. Model-authored
+> briefs render the same way, with `attempts` and rejected-draft counts filled in.
