@@ -1,0 +1,211 @@
+{
+ "runId": "44a9ee2a-4bff-4def-9145-91a528b224e4",
+ "ruleMetrics": {
+  "problematic_total": 10,
+  "problematic_flagged": 8,
+  "recall": 0.8,
+  "clean_total": 20,
+  "clean_flagged": 3,
+  "false_positive_rate": 0.15
+ },
+ "agentMetrics": {
+  "briefs_total": 6,
+  "model_briefs": 0,
+  "fallback_rate": 1,
+  "first_try_valid": 0,
+  "first_try_valid_rate": null,
+  "avg_attempts_model": null,
+  "hallucinated_figure_briefs": 0,
+  "hallucinated_figure_rate": 0
+ },
+ "ruleRows": [
+  {
+   "vendorId": 527,
+   "label": "problematic",
+   "firedRuleCount": 1
+  },
+  {
+   "vendorId": 347,
+   "label": "problematic",
+   "firedRuleCount": 1
+  },
+  {
+   "vendorId": 22815,
+   "label": "problematic",
+   "firedRuleCount": 1
+  },
+  {
+   "vendorId": 4686,
+   "label": "problematic",
+   "firedRuleCount": 4
+  },
+  {
+   "vendorId": 161,
+   "label": "problematic",
+   "firedRuleCount": 6
+  },
+  {
+   "vendorId": 2158,
+   "label": "problematic",
+   "firedRuleCount": 3
+  },
+  {
+   "vendorId": 1956,
+   "label": "problematic",
+   "firedRuleCount": 3
+  },
+  {
+   "vendorId": 72890,
+   "label": "problematic",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 24119,
+   "label": "problematic",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 141733,
+   "label": "problematic",
+   "firedRuleCount": 1
+  },
+  {
+   "vendorId": 106794,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 148835,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 131763,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 15629,
+   "label": "sampled_clean",
+   "firedRuleCount": 1
+  },
+  {
+   "vendorId": 82350,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 121233,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 30244,
+   "label": "sampled_clean",
+   "firedRuleCount": 1
+  },
+  {
+   "vendorId": 13163,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 59224,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 82704,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 5897,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 925,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 3166,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 2698,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 74657,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 11537,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 60237,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 15602,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 47626,
+   "label": "sampled_clean",
+   "firedRuleCount": 1
+  },
+  {
+   "vendorId": 141257,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  }
+ ],
+ "agentRows": [
+  {
+   "investigationId": 1,
+   "mode": "fallback",
+   "attempts": 0,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 2,
+   "mode": "fallback",
+   "attempts": 0,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 3,
+   "mode": "fallback",
+   "attempts": 0,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 4,
+   "mode": "fallback",
+   "attempts": 0,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 5,
+   "mode": "fallback",
+   "attempts": 0,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 6,
+   "mode": "fallback",
+   "attempts": 0,
+   "groundingOk": true
+  }
+ ]
+}
