@@ -142,6 +142,11 @@ a.ref.law:hover { text-decoration: none; background: color-mix(in srgb, var(--pr
 }
 .case .meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
 .case .note { color: var(--ink-2); font-size: 12px; margin-top: 6px; border-top: 1px dashed var(--grid); padding-top: 6px; }
+/* Keyboard path to every board transition — drag-and-drop must never be the only way. */
+.case .move {
+  width: 100%; margin-top: 8px; font-size: 12px; color: var(--ink-2);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 4px 6px;
+}
 
 .banner { border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 14px; border: 1px solid var(--border); }
 .banner.info { background: color-mix(in srgb, var(--brand) 8%, var(--surface)); }

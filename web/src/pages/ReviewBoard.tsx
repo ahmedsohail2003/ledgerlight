@@ -38,17 +38,23 @@ export default function ReviewBoard() {
     }
   }
 
-  function onDrop(e: DragEvent, to: ReviewCase['status']) {
-    e.preventDefault();
-    setDragOver(null);
-    const id = Number(e.dataTransfer.getData('text/plain'));
-    if (!id) return;
+  /** Shared by drag-drop and the keyboard control: note-gated transitions
+   *  open the decision modal, the rest move immediately. */
+  function requestMove(id: number, to: ReviewCase['status']) {
     if (NEEDS_NOTE.has(to)) {
       setPendingMove({ id, to });
       setNote('');
     } else {
       void move(id, to);
     }
+  }
+
+  function onDrop(e: DragEvent, to: ReviewCase['status']) {
+    e.preventDefault();
+    setDragOver(null);
+    const id = Number(e.dataTransfer.getData('text/plain'));
+    if (!id) return;
+    requestMove(id, to);
   }
 
   return (
@@ -83,6 +89,23 @@ export default function ReviewBoard() {
                   {c.investigation_id ? ` · brief #${c.investigation_id}` : ''}
                 </div>
                 {c.decision_note && <div className="note">{c.decision_note}</div>}
+                {isAnalyst && (
+                  // Keyboard-operable path to every transition drag-and-drop
+                  // offers — the board must not be mouse-only.
+                  <select
+                    className="move"
+                    aria-label={`Move case #${c.id} (${c.title})`}
+                    value={c.status}
+                    onChange={(e) => {
+                      const to = e.target.value as ReviewCase['status'];
+                      if (to !== c.status) requestMove(c.id, to);
+                    }}
+                  >
+                    {COLUMNS.map((o) => (
+                      <option key={o.key} value={o.key}>{o.key === c.status ? `· ${o.title}` : `Move to: ${o.title}`}</option>
+                    ))}
+                  </select>
+                )}
               </div>
             ))}
           </div>
@@ -90,14 +113,14 @@ export default function ReviewBoard() {
       </div>
 
       {pendingMove && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <h2>Decision note required</h2>
+        <div className="modal-backdrop" onKeyDown={(e) => { if (e.key === 'Escape') setPendingMove(null); }}>
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="decision-note-title">
+            <h2 id="decision-note-title">Decision note required</h2>
             <p className="sub">
               Marking case #{pendingMove.id} as <b>{pendingMove.to.replace('_', ' ')}</b> requires a written
               justification. It becomes part of the audit trail.
             </p>
-            <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Why is this decision correct?" />
+            <textarea autoFocus value={note} onChange={(e) => setNote(e.target.value)} placeholder="Why is this decision correct?" />
             <div className="actions">
               <button onClick={() => setPendingMove(null)}>Cancel</button>
               <button

@@ -55,9 +55,16 @@ export class ApiError extends Error {
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  const hadToken = Boolean(session.token);
   if (session.token) headers.Authorization = `Bearer ${session.token}`;
   const res = await fetch(path, { ...init, headers });
   const body = await res.json().catch(() => ({}));
+  if (res.status === 401 && hadToken) {
+    // The 8h token expired or was revoked: a stale signed-in UI silently
+    // failing is worse than a visible sign-out. Clear and return to login.
+    session.clear();
+    window.location.assign('/login');
+  }
   if (!res.ok) throw new ApiError(res.status, (body as { error?: string }).error ?? `HTTP ${res.status}`);
   return body as T;
 }

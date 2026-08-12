@@ -2,8 +2,10 @@
 
 The app is **AWS-ready**: a production `Dockerfile` and Terraform for a real,
 minimal, Free-Tier-minded deployment. It runs entirely locally today
-(`docker-compose` for MySQL + `npm run api`); this directory is what makes it
-one command to go live.
+(`docker-compose` for MySQL + `npm run api`); `deploy.sh` stands up the AWS
+side, after which the database still needs a one-time manual init (step list
+below — RDS is deliberately private, so that step is not automatable from a
+laptop).
 
 ## Architecture
 
@@ -33,9 +35,24 @@ Everything else is automated by `deploy.sh` / Terraform.
 4. Have **Docker** and **Terraform ≥ 1.6** (or OpenTofu) installed.
 
 Then: `./infra/deploy.sh`. It provisions ECR, builds and pushes the image,
-stands up RDS + Secrets Manager + App Runner, and prints the public URL. After
-first deploy, run the DB migrations + user seed against the new RDS endpoint,
-and load data (`etl:official`, `rag:load`, `goldset:load`, `rules:run`).
+stands up RDS + Secrets Manager + App Runner, and prints the public URL.
+
+**After first deploy — DB init, manual by design.** RDS is private
+(`publicly_accessible = false`, SG admits only the App Runner connector), so
+migrations/seed/data-load cannot run from your laptop. Pick one: a temporary
+bastion (t4g.nano in the VPC, delete after), an ECS one-off task, or briefly
+toggling RDS public + your IP in the SG and reverting. Then run `migrate`,
+`seed:users`, `rag:load`, `etl:official`, `goldset:load`, `rules:run` with the
+RDS endpoint in `DB_HOST` (and the grants bootstrap as the master user).
+
+**Gemini egress caveat (unresolved, stated plainly):** App Runner with a VPC
+connector routes ALL outbound traffic through the VPC, and the default-VPC
+subnets used here have no NAT gateway — so the container can reach RDS but
+NOT the public Gemini API. Fallback mode works regardless. To enable live
+model calls in this topology, add a NAT gateway (~CAD $45/mo — decidedly not
+Free Tier) or move App Runner egress to public and accept a public-subnet RDS
+with strict SGs. This trade-off is why the demo ships as recordings instead
+of a live URL.
 
 ## Cost (Free Tier / minimal)
 
@@ -54,9 +71,10 @@ demo investigations so the public URL never calls Gemini on cold traffic (see
 
 - `Dockerfile`: multi-stage; the server build stage is exercised locally
   (`npm run build --workspace @ledgerlight/server` emits `dist/`).
-- Terraform HCL parses clean. Full `terraform validate` (provider-schema
-  check) and `plan` run in CI / on your machine, where the Terraform registry
-  is reachable — it is blocked in the build sandbox this was authored in.
+- Terraform: `fmt -check`, `init -backend=false`, and `validate` run in CI on
+  every push (`.github/workflows/ci.yml`, `terraform` job). `plan`/`apply`
+  have NOT been run — they need live AWS credentials, and this stack has never
+  been applied. Treat the HCL as machine-checked but not battle-tested.
 - `deploy.sh` is the intended path; review it before first run.
 
 > This repository intentionally does **not** run a live public instance by

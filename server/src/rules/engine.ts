@@ -63,15 +63,24 @@ export async function runRules(pool: Pool, rules: Rule[], runId: string, sources
     // Complete per-vendor flags, uncapped: whether a vendor is "flagged" (and
     // its finding count) must never depend on which rows fit under the
     // example cap. Eval metrics and evidence packs read THIS table.
-    await pool.query({
-      sql: `INSERT INTO rule_vendor_flags (run_id, rule_id, severity, vendor_id, finding_count)
-            SELECT :__runId, :__ruleId, :__severity, sub.vendor_id, COUNT(*)
+    const [flagRows] = await pool.query<any[]>({
+      sql: `SELECT sub.vendor_id, COUNT(*) AS finding_count
             FROM (${withoutTrailingLimit(rule.sql)}) AS sub
             WHERE sub.vendor_id IS NOT NULL
             GROUP BY sub.vendor_id`,
-      values: { ...rule.params, __runId: runId, __ruleId: rule.id, __severity: rule.severity } as any,
+      values: rule.params as any,
       namedPlaceholders: true,
     });
+    if (flagRows.length > 0) {
+      const BATCH = 2000;
+      for (let i = 0; i < flagRows.length; i += BATCH) {
+        const chunk = flagRows.slice(i, i + BATCH).map((r) => [runId, rule.id, rule.severity, r.vendor_id, Number(r.finding_count)]);
+        await pool.query(
+          `INSERT INTO rule_vendor_flags (run_id, rule_id, severity, vendor_id, finding_count) VALUES ?`,
+          [chunk],
+        );
+      }
+    }
 
     const [totals] = await pool.query<any[]>(
       `SELECT COUNT(*) AS vendors, COALESCE(SUM(finding_count), 0) AS findings

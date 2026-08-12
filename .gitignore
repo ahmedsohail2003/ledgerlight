@@ -4,6 +4,13 @@ node_modules/
 dist/
 coverage/
 data/raw/
+
+# Terraform state carries live secrets (DB passwords, key material) — it must
+# never be committed, and the CI secret gates would not catch raw state JSON.
+# (.terraform.lock.hcl is NOT ignored: the provider pin belongs in git.)
+*.tfstate
+*.tfstate.*
+.terraform/
 *.csv
 .DS_Store
 data/corpus/*.html

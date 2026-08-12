@@ -14,11 +14,17 @@
  *   OFFICIAL_CSV_PATH=/abs/path/contracts.csv npm run etl:official --workspace @ledgerlight/server
  */
 import { createReadStream } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parse } from 'csv-parse';
 import { getPool, getAdminPool, closePool } from '../db/pool.js';
 import { normalizeName, parseMoney, parseDate } from './normalize.js';
 
-const CSV_PATH = process.env.OFFICIAL_CSV_PATH ?? 'data/raw/contracts.csv';
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
+// Relative paths resolve against the REPO ROOT, not the cwd — workspace
+// scripts run with cwd=server/, which is exactly how "data/raw/contracts.csv"
+// used to point at a directory that does not exist.
+const CSV_PATH = path.resolve(REPO_ROOT, process.env.OFFICIAL_CSV_PATH ?? 'data/raw/contracts.csv');
 const BATCH = 2000;
 
 function streamRows(): AsyncIterable<Record<string, string>> {

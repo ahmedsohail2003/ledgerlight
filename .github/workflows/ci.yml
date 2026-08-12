@@ -17,6 +17,10 @@ jobs:
       - run: npm ci
       - run: npm run typecheck --workspace @ledgerlight/server
       - run: npm test --workspace @ledgerlight/server
+      # The validator red team: seeded hallucination briefs that MUST be
+      # rejected (and controls that must pass). Deterministic, no DB/API key —
+      # if the grounding validator regresses, CI goes red.
+      - run: npm run eval:redteam --workspace @ledgerlight/server
 
   web:
     runs-on: ubuntu-latest
@@ -29,10 +33,28 @@ jobs:
       - run: npm ci
       - run: npm run build --workspace @ledgerlight/web
 
+  # The infra is code too: fmt + init(-backend=false) + validate, so the
+  # Terraform cannot drift into "internally consistent but never machine-checked".
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '~1.9'
+      - run: terraform fmt -check -recursive
+        working-directory: infra/terraform
+      - run: terraform init -backend=false
+        working-directory: infra/terraform
+      - run: terraform validate
+        working-directory: infra/terraform
+
   # Supply-chain and secret hygiene. Closes SECURITY.md G-5: dependency and
   # secret scanning run on every push rather than being a documented gap.
-  # The gates here are deliberately self-contained (no third-party action) so
-  # the pipeline cannot go red for reasons unrelated to this repository.
+  # The history/shape gates are self-contained (no third-party action) and
+  # hermetic. The one deliberate exception: `npm audit` consumes the live
+  # advisory feed, so a new upstream CVE can (and should) turn this job red
+  # even with no change in the repo.
   security:
     runs-on: ubuntu-latest
     steps:
