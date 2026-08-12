@@ -17,12 +17,14 @@ async function main(): Promise<void> {
   }
 
   // Cross-reference: which gold-set vendors were flagged by any rule this run?
+  // Reads rule_vendor_flags (complete, uncapped) — NOT the LIMIT-capped
+  // example rows, which undercount high-volume rules.
   const [xref] = await pool.query<any[]>(
     `SELECT g.case_id, g.label, v.canonical_name AS vendor,
-            COUNT(DISTINCT r.rule_id) AS rules_fired, COUNT(r.id) AS findings
+            COUNT(DISTINCT f.rule_id) AS rules_fired, COALESCE(SUM(f.finding_count), 0) AS findings
      FROM gold_labels g
      JOIN vendors v ON v.id = g.vendor_id
-     LEFT JOIN rule_results r ON r.vendor_id = g.vendor_id AND r.run_id = ?
+     LEFT JOIN rule_vendor_flags f ON f.vendor_id = g.vendor_id AND f.run_id = ?
      GROUP BY g.case_id, g.label, v.canonical_name
      ORDER BY findings DESC`,
     [runId],

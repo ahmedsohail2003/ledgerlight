@@ -1,15 +1,17 @@
 {
- "runId": "44a9ee2a-4bff-4def-9145-91a528b224e4",
+ "runId": "19499dff-52dc-4516-96f4-64a4681982fe",
  "ruleMetrics": {
-  "problematic_total": 10,
+  "problematic_total": 9,
   "problematic_flagged": 8,
-  "recall": 0.8,
+  "recall": 0.8888888888888888,
   "clean_total": 20,
-  "clean_flagged": 3,
-  "false_positive_rate": 0.15
+  "clean_flagged": 2,
+  "false_positive_rate": 0.1,
+  "documented_clean_total": 0,
+  "documented_clean_flagged": 0
  },
  "agentMetrics": {
-  "briefs_total": 6,
+  "briefs_total": 14,
   "model_briefs": 0,
   "fallback_rate": 1,
   "first_try_valid": 0,
@@ -22,22 +24,17 @@
   {
    "vendorId": 527,
    "label": "problematic",
-   "firedRuleCount": 1
+   "firedRuleCount": 4
   },
   {
    "vendorId": 347,
    "label": "problematic",
-   "firedRuleCount": 1
+   "firedRuleCount": 4
   },
   {
    "vendorId": 22815,
    "label": "problematic",
-   "firedRuleCount": 1
-  },
-  {
-   "vendorId": 4686,
-   "label": "problematic",
-   "firedRuleCount": 4
+   "firedRuleCount": 3
   },
   {
    "vendorId": 161,
@@ -47,17 +44,17 @@
   {
    "vendorId": 2158,
    "label": "problematic",
-   "firedRuleCount": 3
+   "firedRuleCount": 4
   },
   {
    "vendorId": 1956,
    "label": "problematic",
-   "firedRuleCount": 3
+   "firedRuleCount": 4
   },
   {
    "vendorId": 72890,
    "label": "problematic",
-   "firedRuleCount": 0
+   "firedRuleCount": 2
   },
   {
    "vendorId": 24119,
@@ -70,102 +67,102 @@
    "firedRuleCount": 1
   },
   {
-   "vendorId": 106794,
+   "vendorId": 16654,
    "label": "sampled_clean",
    "firedRuleCount": 0
   },
   {
-   "vendorId": 148835,
+   "vendorId": 2420,
    "label": "sampled_clean",
    "firedRuleCount": 0
   },
   {
-   "vendorId": 131763,
+   "vendorId": 744,
    "label": "sampled_clean",
    "firedRuleCount": 0
   },
   {
-   "vendorId": 15629,
+   "vendorId": 17247,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 3963,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 797,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 922,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 17285,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 143741,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 125518,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 43606,
+   "label": "sampled_clean",
+   "firedRuleCount": 0
+  },
+  {
+   "vendorId": 114433,
    "label": "sampled_clean",
    "firedRuleCount": 1
   },
   {
-   "vendorId": 82350,
+   "vendorId": 6282,
    "label": "sampled_clean",
    "firedRuleCount": 0
   },
   {
-   "vendorId": 121233,
+   "vendorId": 4171,
+   "label": "sampled_clean",
+   "firedRuleCount": 2
+  },
+  {
+   "vendorId": 145066,
    "label": "sampled_clean",
    "firedRuleCount": 0
   },
   {
-   "vendorId": 30244,
-   "label": "sampled_clean",
-   "firedRuleCount": 1
-  },
-  {
-   "vendorId": 13163,
+   "vendorId": 3761,
    "label": "sampled_clean",
    "firedRuleCount": 0
   },
   {
-   "vendorId": 59224,
+   "vendorId": 15724,
    "label": "sampled_clean",
    "firedRuleCount": 0
   },
   {
-   "vendorId": 82704,
+   "vendorId": 14148,
    "label": "sampled_clean",
    "firedRuleCount": 0
   },
   {
-   "vendorId": 5897,
+   "vendorId": 53823,
    "label": "sampled_clean",
    "firedRuleCount": 0
   },
   {
-   "vendorId": 925,
-   "label": "sampled_clean",
-   "firedRuleCount": 0
-  },
-  {
-   "vendorId": 3166,
-   "label": "sampled_clean",
-   "firedRuleCount": 0
-  },
-  {
-   "vendorId": 2698,
-   "label": "sampled_clean",
-   "firedRuleCount": 0
-  },
-  {
-   "vendorId": 74657,
-   "label": "sampled_clean",
-   "firedRuleCount": 0
-  },
-  {
-   "vendorId": 11537,
-   "label": "sampled_clean",
-   "firedRuleCount": 0
-  },
-  {
-   "vendorId": 60237,
-   "label": "sampled_clean",
-   "firedRuleCount": 0
-  },
-  {
-   "vendorId": 15602,
-   "label": "sampled_clean",
-   "firedRuleCount": 0
-  },
-  {
-   "vendorId": 47626,
-   "label": "sampled_clean",
-   "firedRuleCount": 1
-  },
-  {
-   "vendorId": 141257,
+   "vendorId": 78774,
    "label": "sampled_clean",
    "firedRuleCount": 0
   }
@@ -174,37 +171,85 @@
   {
    "investigationId": 1,
    "mode": "fallback",
-   "attempts": 0,
+   "attempts": 1,
    "groundingOk": true
   },
   {
    "investigationId": 2,
    "mode": "fallback",
-   "attempts": 0,
+   "attempts": 1,
    "groundingOk": true
   },
   {
    "investigationId": 3,
    "mode": "fallback",
-   "attempts": 0,
+   "attempts": 1,
    "groundingOk": true
   },
   {
    "investigationId": 4,
    "mode": "fallback",
-   "attempts": 0,
+   "attempts": 1,
    "groundingOk": true
   },
   {
    "investigationId": 5,
    "mode": "fallback",
-   "attempts": 0,
+   "attempts": 1,
    "groundingOk": true
   },
   {
    "investigationId": 6,
    "mode": "fallback",
-   "attempts": 0,
+   "attempts": 1,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 7,
+   "mode": "fallback",
+   "attempts": 1,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 8,
+   "mode": "fallback",
+   "attempts": 1,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 9,
+   "mode": "fallback",
+   "attempts": 1,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 10,
+   "mode": "fallback",
+   "attempts": 1,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 11,
+   "mode": "fallback",
+   "attempts": 1,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 12,
+   "mode": "fallback",
+   "attempts": 1,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 13,
+   "mode": "fallback",
+   "attempts": 1,
+   "groundingOk": true
+  },
+  {
+   "investigationId": 14,
+   "mode": "fallback",
+   "attempts": 1,
    "groundingOk": true
   }
  ]
