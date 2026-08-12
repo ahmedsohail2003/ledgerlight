@@ -52,9 +52,14 @@ function scrubProse(text: string): string {
 
 function unitMultiplierAfter(text: string, tokenEnd: number): number {
   const rest = text.slice(tokenEnd, tokenEnd + 12);
-  if (/^\s{0,2}(million|mn|m)\b/i.test(rest)) return 1_000_000;
-  if (/^\s{0,2}(billion|bn)\b/i.test(rest)) return 1_000_000_000;
-  if (/^\s{0,2}(thousand|k)\b/i.test(rest)) return 1_000;
+  // Single letters count as scale suffixes only when directly attached
+  // ("19.1M", "45k") — a spaced-off "m" is more likely metres than millions.
+  if (/^(m|mn)\b/i.test(rest)) return 1_000_000;
+  if (/^(b|bn)\b/i.test(rest)) return 1_000_000_000;
+  if (/^k\b/i.test(rest)) return 1_000;
+  if (/^\s{1,2}(million|mn)\b/i.test(rest)) return 1_000_000;
+  if (/^\s{1,2}(billion|bn)\b/i.test(rest)) return 1_000_000_000;
+  if (/^\s{1,2}(thousand)\b/i.test(rest)) return 1_000;
   return 1;
 }
 
@@ -94,13 +99,14 @@ function valuesMatch(declared: number, stated: number): boolean {
 function tokenCovered(t: NumericToken, declaredValues: number[]): boolean {
   const stated = tokenToNumber(t.tok);
   return declaredValues.some((v) => {
-    if (valuesMatch(v, stated)) return true;
-    // Percent rendering of a declared fraction: "56.9%" against 0.569.
-    // A %-token never scale-matches — "22.6%" must not pass via 22,600,000.
-    if (t.isPercent) return valuesMatch(v, stated / 100);
-    // Unit shorthand only when the unit word is actually present in the text.
+    // Percent rendering of a declared fraction: "56.9%" against 0.569 — or the
+    // declared percentage itself. A %-token never scale-matches ("22.6%" must
+    // not pass via 22,600,000).
+    if (t.isPercent) return valuesMatch(v, stated) || valuesMatch(v, stated / 100);
+    // A unit word makes the scale EXPLICIT: "$3.5 million" means 3,500,000 and
+    // only 3,500,000 — it must not ground to a declared raw 3.5.
     if (t.unitMultiplier !== 1) return valuesMatch(v, stated * t.unitMultiplier);
-    return false;
+    return valuesMatch(v, stated);
   });
 }
 
@@ -109,17 +115,19 @@ function escapeRegExp(s: string): string {
 }
 
 /** Digits inside the vendor's own name ("PEDABUN 35 NURSING") are identity,
- *  not figures — blank the name out before token extraction. */
-function scrubVendorName(text: string, brief: Brief, pack: EvidencePack): string {
-  let out = text;
-  const names = new Set<string>();
-  if (pack.vendor?.canonical_name) names.add(pack.vendor.canonical_name);
-  if (brief.target) names.add(brief.target);
-  for (const name of names) {
-    if (!/\d/.test(name)) continue; // only names that would shed tokens
-    out = out.replace(new RegExp(escapeRegExp(name), 'gi'), ' ');
-  }
-  return out;
+ *  not figures — blank the name out before token extraction.
+ *
+ *  ONLY the server-derived canonical name is scrubbed. brief.target is
+ *  model-authored text and must never become a scrub pattern: a hijacked
+ *  model could otherwise launder any figure past validation by copying it
+ *  into target (the investigator separately rejects briefs whose target
+ *  differs from the requested one). The match is boundary-anchored so a
+ *  name like "35" can never eat the middle of "$1,350,000" or a date. */
+function scrubVendorName(text: string, pack: EvidencePack): string {
+  const name = pack.vendor?.canonical_name;
+  if (!name || !/\d/.test(name)) return text; // only names that would shed tokens
+  const pattern = new RegExp(`(?<![\\w$.,])${escapeRegExp(name)}(?![\\w.,])`, 'gi');
+  return text.replace(pattern, ' ');
 }
 
 export function validateGrounding(brief: Brief, pack: EvidencePack): GroundingResult {
@@ -175,7 +183,7 @@ export function validateGrounding(brief: Brief, pack: EvidencePack): GroundingRe
       allDeclaredValues.push(fig.value);
     }
 
-    for (const t of tokenize(scrubVendorName(claim.text, brief, pack))) {
+    for (const t of tokenize(scrubVendorName(claim.text, pack))) {
       if (!tokenCovered(t, declaredValues)) {
         reasons.push(
           `${where} states the number "${t.tok}" but no declared figure matches it. ` +
@@ -197,7 +205,7 @@ export function validateGrounding(brief: Brief, pack: EvidencePack): GroundingRe
 
   // The headline is the most prominent surface of the brief — it gets the
   // same numeric discipline, checked against the union of declared figures.
-  for (const t of tokenize(scrubVendorName(brief.headline, brief, pack))) {
+  for (const t of tokenize(scrubVendorName(brief.headline, pack))) {
     if (!tokenCovered(t, allDeclaredValues)) {
       reasons.push(
         `headline states the number "${t.tok}" but no claim declares a matching figure. ` +
@@ -212,7 +220,7 @@ export function validateGrounding(brief: Brief, pack: EvidencePack): GroundingRe
   if (pack.data_coverage_note) {
     limitations = limitations.split(pack.data_coverage_note).join(' ');
   }
-  for (const t of tokenize(scrubVendorName(limitations, brief, pack))) {
+  for (const t of tokenize(scrubVendorName(limitations, pack))) {
     if (!tokenCovered(t, allDeclaredValues)) {
       reasons.push(
         `limitations states the number "${t.tok}" but no claim declares a matching figure. ` +

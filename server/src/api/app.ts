@@ -226,9 +226,12 @@ export function createApp({ pool, roPool, generator }: AppDeps): express.Express
                 COUNT(*) AS total
          FROM investigations`,
       );
+      // Complete uncapped per-vendor flags for the latest COMPLETED run — the
+      // dashboard must show the same numbers the eval computes, not the
+      // LIMIT-capped example rows.
       const [ruleCounts] = await pool.query<any[]>(
-        `SELECT rule_id, COUNT(*) AS findings FROM rule_results
-         WHERE run_id = (SELECT run_id FROM rule_results ORDER BY computed_at DESC LIMIT 1)
+        `SELECT rule_id, SUM(finding_count) AS findings FROM rule_vendor_flags
+         WHERE run_id = (SELECT run_id FROM rule_runs WHERE completed_at IS NOT NULL ORDER BY completed_at DESC LIMIT 1)
          GROUP BY rule_id`,
       );
       const [reviewCounts] = await pool.query<any[]>(

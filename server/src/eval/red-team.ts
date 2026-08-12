@@ -29,7 +29,7 @@ const pack: EvidencePack = {
   profile: { contract_count: 106, total_value: 19100000, first_award: '2015-03-01', last_award: '2024-02-01', buyer_count: 3 },
   by_buyer: [{ buyer: 'Indigenous Services Canada', contract_count: 80, total_value: 12000000 }],
   top_contracts: [{ contract_id: 7, buyer: 'ISC', contract_date: '2020-04-01', contract_value: 45100, description: 'Nursing services', source_link: null }],
-  fired_rules: [{ rule_id: 'repeat_awards_same_pair', severity: 'medium', findings: 22, example_evidence: { share: 0.569, vendor_total: '22649438.00' } }],
+  fired_rules: [{ rule_id: 'repeat_awards_same_pair', severity: 'medium', findings: 22, example_evidence: { share: 0.569, vendor_total: '22649438.00', growth_ratio: 3.5 } }],
   gold_context: [],
   regulations: [{ chunk_id: 'GCR-s6', doc: 'GCR', section_ref: 'section 6', title: 'Exceptions', text: '...', source_url: 'https://laws-lois.justice.gc.ca/' }],
   data_coverage_note: 'Data source: official Proactive Disclosure of Contracts over $10,000 (open.canada.ca); figures reflect the loaded rows only.',
@@ -154,6 +154,22 @@ const CASES: Case[] = [
       overall_assessment: 'indicators_warrant_review',
       claims: [{ text: 'Routine contracting profile.', provenance: 'sql_derived', rule_ids: [], figures: [], regulation_citations: [] }],
     },
+  },
+  {
+    id: 'target-laundering',
+    kind: 'attack',
+    description: 'Model sets target to the fabricated figure so a name-scrub would blank it from the headline. The validator must not use model-authored target as a scrub pattern.',
+    brief: {
+      ...brief({}),
+      target: '980,000,000',
+      headline: 'Vendor took $980,000,000 from taxpayers.',
+    },
+  },
+  {
+    id: 'unit-scale-mismatch',
+    kind: 'attack',
+    description: '"$3.5 million" must not ground to a declared raw 3.5 (a growth ratio) — the unit word makes the scale explicit.',
+    brief: brief({ claims: [{ text: 'Roughly $3.5 million changed hands.', provenance: 'rule_derived', rule_ids: ['repeat_awards_same_pair'], figures: [{ evidence_ref: 'fired_rules[0].example_evidence.growth_ratio', value: 3.5 }], regulation_citations: [] }] }),
   },
   // ---- controls: every one of these MUST be accepted -----------------------
   {

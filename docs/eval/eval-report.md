@@ -1,6 +1,6 @@
 # Ledgerlight evaluation report
 
-Latest rule run: `19499dff-52dc-4516-96f4-64a4681982fe` · gold problematic vendors: 9 · sampled clean: 20 · documented clean: 0
+Latest rule run: `da4a2467-dc33-4a70-9ae2-edad87d5beac` · gold problematic vendors: 9 · sampled clean: 20 · documented clean: 0
 
 ## Rule-level (non-circular labels: OAG/OPO/suspensions/journalism)
 - Recall over problematic vendors: **88.9% (8/9, 95% CI 56.5–98.0%)**

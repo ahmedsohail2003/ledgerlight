@@ -13,7 +13,10 @@ export function buildFallbackBrief(target: string, pack: EvidencePack): Brief {
   if (!pack.vendor || !pack.profile) {
     return {
       target,
-      headline: `No contract records found for "${target}" in the loaded data.`,
+      // Static text: the raw target string is user/model-supplied and may
+      // contain digits, which the grounding re-audit would flag as
+      // undeclared figures if interpolated here.
+      headline: 'No contract records found for this target in the loaded data.',
       overall_assessment: 'insufficient_data',
       claims: [{
         text: 'The target could not be resolved to any vendor in the loaded contract data.',

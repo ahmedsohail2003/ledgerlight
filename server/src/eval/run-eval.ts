@@ -69,9 +69,9 @@ async function main(): Promise<void> {
   );
 
   // Flags come from rule_vendor_flags — the complete per-vendor aggregate
-  // computed without the example-row caps.
+  // computed without the example-row caps — for the latest COMPLETED run.
   const [latestRun] = await pool.query<any[]>(
-    `SELECT run_id FROM rule_vendor_flags ORDER BY computed_at DESC LIMIT 1`,
+    `SELECT run_id FROM rule_runs WHERE completed_at IS NOT NULL ORDER BY completed_at DESC LIMIT 1`,
   );
   const runId = latestRun[0]?.run_id ?? null;
 

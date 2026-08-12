@@ -79,5 +79,5 @@ demo investigations so the public URL never calls Gemini on cold traffic (see
 
 > This repository intentionally does **not** run a live public instance by
 > default (cost + credentials are the owner's). The walkthrough assets in
-> `docs/demo/` show the app running end-to-end; going live is the one command
-> above whenever wanted.
+> `docs/demo/` show the app running end-to-end; going live is `deploy.sh`
+> plus the manual DB-init step above, whenever wanted.

@@ -244,6 +244,67 @@ describe('validator hardening — headline and limitations', () => {
   });
 });
 
+describe('validator hardening — target laundering and scrub boundaries', () => {
+  it('does NOT scrub model-authored target: a figure copied into target still fails the headline scan', () => {
+    const b = brief({ text: 'ok', figures: [] });
+    b.target = '980,000,000';
+    b.headline = 'Vendor took $980,000,000 from taxpayers.';
+    const r = validateGrounding(b, pack);
+    expect(r.ok).toBe(false);
+    expect(r.reasons[0]).toContain('headline');
+  });
+
+  it('vendor-name scrub is boundary-anchored: a digit-bearing name never eats the middle of a larger number', () => {
+    const packNamed: EvidencePack = {
+      ...pack,
+      vendor: { id: 9, canonical_name: '35' },
+    };
+    const b = brief({
+      text: 'The vendor was paid $1,350,000 across the period.',
+      figures: [{ evidence_ref: 'profile.total_value', value: 19100000 }],
+    });
+    // "35" must NOT be blanked out of "$1,350,000" — the full (wrong) number
+    // must surface as an ungrounded token and be rejected intact.
+    const r = validateGrounding(b, packNamed);
+    expect(r.ok).toBe(false);
+    expect(r.reasons[0]).toContain('$1,350,000');
+  });
+
+  it('unit-suffixed numbers ground only at their explicit scale', () => {
+    const packRatio: EvidencePack = {
+      ...pack,
+      fired_rules: [{ rule_id: 'repeat_awards_same_pair', severity: 'medium', findings: 2, example_evidence: { growth_ratio: 3.5 } }],
+    };
+    const r = validateGrounding(brief({
+      text: 'Roughly $3.5 million changed hands.',
+      provenance: 'rule_derived',
+      rule_ids: ['repeat_awards_same_pair'],
+      figures: [{ evidence_ref: 'fired_rules[0].example_evidence.growth_ratio', value: 3.5 }],
+    }), packRatio);
+    expect(r.ok).toBe(false);
+  });
+
+  it('accepts attached single-letter scale suffixes ("19.1M") but not spaced-off ambiguous ones ("5 m")', () => {
+    const ok = validateGrounding(brief({
+      text: 'Portfolio of $19.1M across the period.',
+      figures: [{ evidence_ref: 'profile.total_value', value: 19100000 }],
+    }), pack);
+    expect(ok.ok).toBe(true);
+
+    const packFive: EvidencePack = {
+      ...pack,
+      fired_rules: [{ rule_id: 'repeat_awards_same_pair', severity: 'medium', findings: 2, example_evidence: { depth: 5000000 } }],
+    };
+    const bad = validateGrounding(brief({
+      text: 'A trench 5 m deep.',
+      provenance: 'rule_derived',
+      rule_ids: ['repeat_awards_same_pair'],
+      figures: [{ evidence_ref: 'fired_rules[0].example_evidence.depth', value: 5000000 }],
+    }), packFive);
+    expect(bad.ok).toBe(false);
+  });
+});
+
 describe('validator hardening — vendor names containing digits', () => {
   it('does not treat digits in the vendor\'s own name as figures', () => {
     const packNamed: EvidencePack = {

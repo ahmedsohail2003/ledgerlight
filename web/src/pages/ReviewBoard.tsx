@@ -10,12 +10,25 @@ const COLUMNS: { key: ReviewCase['status']; title: string }[] = [
 
 const NEEDS_NOTE = new Set(['substantiated', 'dismissed']);
 
+// Client mirror of the server state machine (server/src/api/reviews.ts) so the
+// keyboard control only offers moves the server will accept.
+const LEGAL: Record<ReviewCase['status'], ReviewCase['status'][]> = {
+  new: ['under_review', 'dismissed'],
+  under_review: ['substantiated', 'dismissed', 'new'],
+  substantiated: ['under_review'],
+  dismissed: ['under_review'],
+};
+
 export default function ReviewBoard() {
   const [cases, setCases] = useState<ReviewCase[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<string | null>(null);
   const [pendingMove, setPendingMove] = useState<{ id: number; to: ReviewCase['status'] } | null>(null);
   const [note, setNote] = useState('');
+  // Keyboard move control: choice is staged per-card and only acted on via the
+  // explicit Apply button — arrow-keying through a closed <select> must never
+  // fire audit-logged transitions by itself.
+  const [staged, setStaged] = useState<Record<number, ReviewCase['status'] | ''>>({});
   const isAnalyst = session.role === 'analyst';
 
   async function refresh() {
@@ -32,9 +45,13 @@ export default function ReviewBoard() {
     setError(null);
     try {
       await api.transitionReview(id, to, decisionNote);
-      await refresh();
     } catch (e) {
       setError(e instanceof ApiError ? e.message : String(e));
+    } finally {
+      // Refresh on failure too: a 409 means the board state is stale, and
+      // re-fetching is what un-sticks it.
+      setStaged((s) => ({ ...s, [id]: '' }));
+      await refresh();
     }
   }
 
@@ -81,7 +98,13 @@ export default function ReviewBoard() {
                 key={c.id}
                 className="case"
                 draggable={isAnalyst}
-                onDragStart={(e) => e.dataTransfer.setData('text/plain', String(c.id))}
+                onDragStart={(e) => {
+                  // Dragging the embedded form controls must not drag the card
+                  // (native form controls inside draggables misbehave otherwise).
+                  const t = e.target as HTMLElement;
+                  if (t.tagName === 'SELECT' || t.tagName === 'BUTTON') { e.preventDefault(); return; }
+                  e.dataTransfer.setData('text/plain', String(c.id));
+                }}
               >
                 <div>{c.title}</div>
                 <div className="meta">
@@ -90,21 +113,27 @@ export default function ReviewBoard() {
                 </div>
                 {c.decision_note && <div className="note">{c.decision_note}</div>}
                 {isAnalyst && (
-                  // Keyboard-operable path to every transition drag-and-drop
-                  // offers — the board must not be mouse-only.
-                  <select
-                    className="move"
-                    aria-label={`Move case #${c.id} (${c.title})`}
-                    value={c.status}
-                    onChange={(e) => {
-                      const to = e.target.value as ReviewCase['status'];
-                      if (to !== c.status) requestMove(c.id, to);
-                    }}
-                  >
-                    {COLUMNS.map((o) => (
-                      <option key={o.key} value={o.key}>{o.key === c.status ? `· ${o.title}` : `Move to: ${o.title}`}</option>
-                    ))}
-                  </select>
+                  // Keyboard-operable path to every LEGAL transition — staged
+                  // in a select, executed only by the explicit Apply button.
+                  <div className="move-row">
+                    <select
+                      className="move"
+                      aria-label={`Move case #${c.id} (${c.title})`}
+                      value={staged[c.id] ?? ''}
+                      onChange={(e) => setStaged((s) => ({ ...s, [c.id]: e.target.value as ReviewCase['status'] | '' }))}
+                    >
+                      <option value="">Move to…</option>
+                      {LEGAL[c.status].map((k) => (
+                        <option key={k} value={k}>{COLUMNS.find((o) => o.key === k)?.title ?? k}</option>
+                      ))}
+                    </select>
+                    <button
+                      disabled={!staged[c.id]}
+                      onClick={() => { const to = staged[c.id]; if (to) requestMove(c.id, to); }}
+                    >
+                      Apply
+                    </button>
+                  </div>
                 )}
               </div>
             ))}

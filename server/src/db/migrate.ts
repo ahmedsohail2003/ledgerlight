@@ -25,7 +25,12 @@ async function main(): Promise<void> {
     }
     const sql = await readFile(path.join(MIGRATIONS_DIR, file), 'utf8');
     // Naive splitter is fine here: our migrations avoid semicolons in strings.
-    const statements = sql.split(/;\s*(?:\r?\n|$)/).map((s) => s.trim()).filter(Boolean);
+    // Chunks that are only SQL comments (e.g. trailing notes after the last
+    // statement) are dropped — the server answers ER_EMPTY_QUERY otherwise.
+    const statements = sql
+      .split(/;\s*(?:\r?\n|$)/)
+      .map((s) => s.trim())
+      .filter((s) => s.replace(/^--.*$/gm, '').trim().length > 0);
     for (const stmt of statements) {
       await pool.query(stmt);
     }

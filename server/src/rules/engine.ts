@@ -43,6 +43,10 @@ export async function runRules(pool: Pool, rules: Rule[], runId: string, sources
   const summaries: RuleRunSummary[] = [];
   const hasOfficial = sources.has('pd_official');
 
+  // Register the run; consumers only trust runs with completed_at set, so a
+  // half-finished (or crashed) run can never serve partial flag sets.
+  await pool.query(`INSERT INTO rule_runs (run_id) VALUES (?)`, [runId]);
+
   for (const rule of rules) {
     if (rule.requires === 'pd_official' && !hasOfficial) {
       summaries.push({ ruleId: rule.id, status: 'dormant', findings: 0, examples: 0 });
@@ -96,5 +100,15 @@ export async function runRules(pool: Pool, rules: Rule[], runId: string, sources
     );
     summaries.push({ ruleId: rule.id, status: 'ran', findings: totalFindings, examples: rows.length });
   }
+
+  await pool.query(`UPDATE rule_runs SET completed_at = CURRENT_TIMESTAMP WHERE run_id = ?`, [runId]);
   return summaries;
+}
+
+/** The run consumers should read: the most recently COMPLETED one. */
+export async function latestCompletedRunId(pool: Pool): Promise<string | null> {
+  const [rows] = await pool.query<any[]>(
+    `SELECT run_id FROM rule_runs WHERE completed_at IS NOT NULL ORDER BY completed_at DESC LIMIT 1`,
+  );
+  return rows[0]?.run_id ?? null;
 }

@@ -60,11 +60,22 @@ export function getRoPool(): mysql.Pool {
 }
 
 /** Admin connection for maintenance operations that need DDL (e.g. TRUNCATE in
- *  the official ETL reset). Never used by the request path. Falls back to the
- *  main pool when DB_ADMIN_USER is unset. */
+ *  the official ETL reset). Never used by the request path. Fails closed like
+ *  the ro pool: the app identity has no DDL grants, so a silent fallback
+ *  could only ever produce a confusing mid-operation denial. */
 export function getAdminPool(): mysql.Pool {
   const adminUser = process.env.DB_ADMIN_USER;
-  if (!adminUser) return getPool();
+  if (!adminUser) {
+    if (process.env.ALLOW_SINGLE_DB_IDENTITY === '1') {
+      console.warn('[pool] ALLOW_SINGLE_DB_IDENTITY=1: DDL operations will run on the app identity (and likely be denied).');
+      return getPool();
+    }
+    throw new Error(
+      'DB_ADMIN_USER is not set. Migrations and the ETL reset need the DDL ' +
+      'identity (run server/src/db/grants.sql, then set DB_ADMIN_USER=ledgerlight_admin ' +
+      'and DB_ADMIN_PASSWORD). To override for a demo, set ALLOW_SINGLE_DB_IDENTITY=1.',
+    );
+  }
   if (!adminPool) {
     adminPool = mysql.createPool({
       ...config.db,

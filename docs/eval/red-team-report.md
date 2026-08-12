@@ -3,7 +3,7 @@
 Seeded hallucination/injection briefs thrown at `validateGrounding` — the
 "0% by construction" claim, attacked directly. Deterministic; no DB, no API key.
 
-- Attacks rejected: **14/14**
+- Attacks rejected: **16/16**
 - Well-formed controls accepted: **5/5**
 
 | # | case | kind | expected | actual | ok |
@@ -22,11 +22,13 @@ Seeded hallucination/injection briefs thrown at `validateGrounding` — the
 | 12 | small-count-scale-abuse | attack | rejected | rejected | ✅ |
 | 13 | contradictory-assessment-clean | attack | rejected | rejected | ✅ |
 | 14 | contradictory-assessment-flagged | attack | rejected | rejected | ✅ |
-| 15 | control-exact-figure | control | accepted | accepted | ✅ |
-| 16 | control-unit-shorthand | control | accepted | accepted | ✅ |
-| 17 | control-percent-fraction | control | accepted | accepted | ✅ |
-| 18 | control-vendor-name-digits | control | accepted | accepted | ✅ |
-| 19 | control-fired-rule | control | accepted | accepted | ✅ |
+| 15 | target-laundering | attack | rejected | rejected | ✅ |
+| 16 | unit-scale-mismatch | attack | rejected | rejected | ✅ |
+| 17 | control-exact-figure | control | accepted | accepted | ✅ |
+| 18 | control-unit-shorthand | control | accepted | accepted | ✅ |
+| 19 | control-percent-fraction | control | accepted | accepted | ✅ |
+| 20 | control-vendor-name-digits | control | accepted | accepted | ✅ |
+| 21 | control-fired-rule | control | accepted | accepted | ✅ |
 
 ## Known residual gaps (accepted risks, stated rather than hidden)
 - Word-form numbers ("nineteen million dollars") contain no digit tokens and pass unchecked.

@@ -91,9 +91,11 @@ export async function buildVendorEvidence(pool: Pool, vendorRef: string): Promis
   );
 
   // Counts come from rule_vendor_flags — the complete, uncapped per-vendor
-  // aggregate — never from the LIMIT-bounded example rows.
+  // aggregate — never from the LIMIT-bounded example rows. Only a COMPLETED
+  // run is trusted: reading the newest flag row would expose packs built
+  // mid-run to partial fired-rule sets.
   const [latestRun] = await pool.query<any[]>(
-    `SELECT run_id FROM rule_vendor_flags ORDER BY computed_at DESC LIMIT 1`,
+    `SELECT run_id FROM rule_runs WHERE completed_at IS NOT NULL ORDER BY completed_at DESC LIMIT 1`,
   );
   const runId: string | null = latestRun[0]?.run_id ?? null;
   const [firedRules] = await pool.query<any[]>(

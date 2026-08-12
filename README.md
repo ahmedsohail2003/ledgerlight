@@ -9,7 +9,7 @@ Ledgerlight loads the Government of Canada's entire [Proactive Disclosure of Con
 - **every citation of the law must resolve to a clause actually retrieved** from the [Government Contracts Regulations](https://laws-lois.justice.gc.ca/eng/regulations/SOR-87-402/FullText.html),
 - the same numeric discipline covers the **headline and limitations**, the verdict may not contradict the fired-rule set, and everything the model merely *thinks* is visibly labeled **model inference** and may carry no figures at all.
 
-A draft that breaks any rule is mechanically rejected and re-prompted with the exact reason; after three failures the system emits a deterministic template brief instead. That containment claim is itself under test: a **[red-team suite](docs/eval/red-team-report.md) attacks the validator with seeded hallucination briefs on every CI run** — 14 attack classes, all currently rejected, with the residual gaps it can't see (word-form numbers) listed in the report instead of left unsaid.
+A draft that breaks any rule is mechanically rejected and re-prompted with the exact reason; after three failures the system emits a deterministic template brief instead. That containment claim is itself under test: a **[red-team suite](docs/eval/red-team-report.md) attacks the validator with seeded hallucination briefs on every CI run** — 16 attack classes (including target-laundering and unit-scale abuse, both found by adversarial review of this codebase), all currently rejected, with the residual gaps it can't see (word-form numbers) listed in the report instead of left unsaid.
 
 Every flag is framed as an *indicator warranting review*, never an accusation — and nothing becomes "substantiated" without a human analyst recording a written justification on the review board.
 
@@ -59,7 +59,8 @@ The gold set labels vendors from **independent** findings — Auditor General au
 ```bash
 # 1. MySQL (Docker) + env. First boot auto-applies the least-privilege
 #    identity bootstrap (grants.sql is mounted into docker-entrypoint-initdb.d).
-docker compose up -d mysql
+#    --wait blocks until the healthcheck passes, so step 2 can't race the init.
+docker compose up -d --wait mysql
 cp .env.example .env   # root .env IS loaded (from any workspace script);
                        # GEMINI_API_KEY optional — fallback mode without it.
                        # DB_RO_USER is required: the agent pool fails closed

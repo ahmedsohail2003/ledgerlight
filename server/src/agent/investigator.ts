@@ -100,6 +100,16 @@ export async function investigateVendor(
         continue;
       }
 
+      // target is the one field the model must echo, not author: a brief
+      // whose target differs from the investigated one is rejected outright
+      // (a fabricated target is also the laundering vector the vendor-name
+      // scrub in the validator must never be exposed to).
+      if (schema.data.target !== target) {
+        corrections = [`target must be exactly "${target}" (got "${schema.data.target.slice(0, 120)}"). Return the brief with the target unchanged.`];
+        validationFailures.push(corrections);
+        continue;
+      }
+
       const grounding = validateGrounding(schema.data, pack);
       if (!grounding.ok) {
         corrections = grounding.reasons;

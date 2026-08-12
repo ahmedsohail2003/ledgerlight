@@ -59,7 +59,13 @@ in depth:
    free-text surface of the brief — claims, headline, and limitations — plus
    the `overall_assessment` verdict (which may not contradict the fired-rule
    set), and evidence refs resolve only to own data properties (no `.length`
-   or prototype tricks). Because a boundary is only as good as its tests, a
+   or prototype tricks). The brief's `target` field is treated as hostile:
+   the investigator rejects any draft whose target differs from the
+   requested one, and the validator's vendor-name scrub uses only the
+   server-derived canonical name with boundary anchors — model-authored
+   text can never become a scrub pattern (the laundering vector
+   adversarial review caught in an earlier iteration of this very
+   defense). Because a boundary is only as good as its tests, a
    standing **red-team suite attacks the validator itself** with seeded
    hallucination briefs on every CI run (`npm run eval:redteam`,
    `docs/eval/red-team-report.md`) and fails the build if any attack lands.
@@ -120,4 +126,4 @@ cheap and real (see G-5, now shipped).
 | G-5 | ~~No dependency or secret scanning in CI~~ | ✅ **Closed.** CI now runs four gates on every push: `npm audit --audit-level=high`; an assertion that no `.env`, CSV, or `node_modules` path exists anywhere in history; a credential-shape scan (Google/AWS keys, private-key blocks) across every commit; and a check that secret-named variables are never assigned literals. Adding the audit immediately surfaced a **critical and a high** advisory in the dev toolchain (vitest/vite), fixed by upgrading to `vitest@4` and `vite@8` — now **0 vulnerabilities**. The history/shape scans are self-contained rather than a third-party action and hermetic; `npm audit` is the one deliberately live gate — a new upstream advisory can (and should) turn CI red with no repo change. Both scan types were verified against planted test secrets before shipping. |
 | G-6 | Audit log is append-only by DB grant; no backups or off-box copy | **Accepted for local.** A DB admin could still rewrite history. RDS backup retention is already set in Terraform. Trigger: production → ship the audit log to S3 with Object Lock and test a restore. |
 | G-7 | Vendor names in queries are visible to the LLM provider | **Accepted.** Everything sent is already-published open data; no personal or non-public information exists in the system. Trigger: ingesting any non-public source → re-run this assessment first. |
-| G-8 | Demo credentials are documented for reviewers | **Intentional** so the demo is reproducible. Trigger: any non-demo exposure → rotate and remove from docs. |
+| G-8 | Demo account emails are fixed and documented (`analyst@`/`viewer@ledgerlight.local`); passwords come from `SEED_*` env vars or are randomly generated and printed once at seed time — never stored in the repo | **Intentional** so the demo is reproducible without shipping credentials. Trigger: any non-demo exposure → rotate and switch to a real IdP (see G-2). |

@@ -59,9 +59,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (session.token) headers.Authorization = `Bearer ${session.token}`;
   const res = await fetch(path, { ...init, headers });
   const body = await res.json().catch(() => ({}));
-  if (res.status === 401 && hadToken) {
-    // The 8h token expired or was revoked: a stale signed-in UI silently
-    // failing is worse than a visible sign-out. Clear and return to login.
+  // The 8h token expired or was revoked: a stale signed-in UI silently
+  // failing is worse than a visible sign-out. Clear and return to login.
+  // /auth/* is exempt — a mistyped password 401s too, and must not nuke an
+  // existing session or reload mid-login.
+  if (res.status === 401 && hadToken && !path.startsWith('/auth/')) {
     session.clear();
     window.location.assign('/login');
   }
