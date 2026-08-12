@@ -1,0 +1,210 @@
+{
+ "caught": 14,
+ "attacks": 14,
+ "controlsOk": 5,
+ "controls": 5,
+ "rows": [
+  {
+   "id": "undeclared-figure",
+   "kind": "attack",
+   "description": "Classic hallucination: a dollar figure stated in claim text with no declared figure.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] states the number \"$60,000,000\" but no declared figure matches it. Every number must be declared in figures[] with its evidence_ref, or removed."
+   ]
+  },
+  {
+   "id": "wrong-declared-value",
+   "kind": "attack",
+   "description": "Declared figure contradicts the evidence value at its own ref.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] declares value 25000000 for \"profile.total_value\" but the evidence value is 19100000. Use only source values.",
+    "claims[0] states the number \"$25,000,000\" but no declared figure matches it. Every number must be declared in figures[] with its evidence_ref, or removed."
+   ]
+  },
+  {
+   "id": "length-property-grounding",
+   "kind": "attack",
+   "description": "Figure \"grounded\" to a string .length instead of evidence data.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] declares figure ref \"vendor.canonical_name.length\" but no numeric value exists at that path in the evidence pack.",
+    "claims[0] states the number \"21\" but no declared figure matches it. Every number must be declared in figures[] with its evidence_ref, or removed."
+   ]
+  },
+  {
+   "id": "prototype-walk-grounding",
+   "kind": "attack",
+   "description": "Figure ref walking to a non-own property (array length).",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] declares figure ref \"by_buyer.length\" but no numeric value exists at that path in the evidence pack.",
+    "claims[0] states the number \"1\" but no declared figure matches it. Every number must be declared in figures[] with its evidence_ref, or removed."
+   ]
+  },
+  {
+   "id": "unfired-rule-citation",
+   "kind": "attack",
+   "description": "Red flag asserted by citing a rule that never fired.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] cites rule_id \"split_awards_under_threshold\" which did NOT fire for this target; fired rules are [repeat_awards_same_pair]. Cite only fired rules or drop the claim."
+   ]
+  },
+  {
+   "id": "unretrieved-regulation",
+   "kind": "attack",
+   "description": "Legal hallucination: citing a regulation clause not retrieved for this case.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] cites regulation \"GCR-s12\" which was not in the retrieved set [GCR-s6]. Cite only a retrieved chunk_id or drop it."
+   ]
+  },
+  {
+   "id": "inference-smuggling-figures",
+   "kind": "attack",
+   "description": "model_inference claim smuggling declared figures (disguised fact).",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] is provenance=model_inference but carries figures/rule_ids; re-tag it as sql_derived/rule_derived with proper refs, or strip the figures."
+   ]
+  },
+  {
+   "id": "headline-hallucination",
+   "kind": "attack",
+   "description": "Fabricated figure placed in the headline (the most prominent UI text).",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "headline states the number \"$980,000,000\" but no claim declares a matching figure. Declare it in a claim's figures[] or remove it from the headline."
+   ]
+  },
+  {
+   "id": "limitations-hallucination",
+   "kind": "attack",
+   "description": "Fabricated figure placed in limitations.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "limitations states the number \"3,500\" but no claim declares a matching figure. Quote the data_coverage_note verbatim, declare the figure, or remove it."
+   ]
+  },
+  {
+   "id": "bare-scale-shorthand",
+   "kind": "attack",
+   "description": "Bare \"19.1\" with no unit word must not match the declared 19,100,000.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] states the number \"19.1\" but no declared figure matches it. Every number must be declared in figures[] with its evidence_ref, or removed."
+   ]
+  },
+  {
+   "id": "percent-scale-abuse",
+   "kind": "attack",
+   "description": "\"22.6%\" must not pass because 22.6 million happens to be near a declared 22,649,438.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] states the number \"22.6%\" but no declared figure matches it. Every number must be declared in figures[] with its evidence_ref, or removed."
+   ]
+  },
+  {
+   "id": "small-count-scale-abuse",
+   "kind": "attack",
+   "description": "Bare \"45\" must not pass via ×1000 landing inside the 0.5% tolerance of a declared 45,100.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "claims[0] states the number \"45\" but no declared figure matches it. Every number must be declared in figures[] with its evidence_ref, or removed."
+   ]
+  },
+  {
+   "id": "contradictory-assessment-clean",
+   "kind": "attack",
+   "description": "overall_assessment says no indicators although one fired.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "overall_assessment is \"no_indicators_found\" but 1 indicator(s) fired [repeat_awards_same_pair]; use \"indicators_warrant_review\"."
+   ]
+  },
+  {
+   "id": "contradictory-assessment-flagged",
+   "kind": "attack",
+   "description": "overall_assessment claims indicators on a target where none fired.",
+   "expected": "rejected",
+   "actual": "rejected",
+   "pass": true,
+   "reasons": [
+    "overall_assessment is \"indicators_warrant_review\" but no deterministic indicators fired; use \"no_indicators_found\" (or \"insufficient_data\" if the target did not resolve)."
+   ]
+  },
+  {
+   "id": "control-exact-figure",
+   "kind": "control",
+   "description": "Correctly declared exact figure.",
+   "expected": "accepted",
+   "actual": "accepted",
+   "pass": true,
+   "reasons": []
+  },
+  {
+   "id": "control-unit-shorthand",
+   "kind": "control",
+   "description": "\"$19.1 million\" with the unit word present and full value declared.",
+   "expected": "accepted",
+   "actual": "accepted",
+   "pass": true,
+   "reasons": []
+  },
+  {
+   "id": "control-percent-fraction",
+   "kind": "control",
+   "description": "\"56.9%\" rendering a declared 0.569 share.",
+   "expected": "accepted",
+   "actual": "accepted",
+   "pass": true,
+   "reasons": []
+  },
+  {
+   "id": "control-vendor-name-digits",
+   "kind": "control",
+   "description": "Digits inside the vendor's own name (\"PEDABUN 35\") are identity, not figures.",
+   "expected": "accepted",
+   "actual": "accepted",
+   "pass": true,
+   "reasons": []
+  },
+  {
+   "id": "control-fired-rule",
+   "kind": "control",
+   "description": "Red flag citing a rule that really fired, with retrieved citation.",
+   "expected": "accepted",
+   "actual": "accepted",
+   "pass": true,
+   "reasons": []
+  }
+ ]
+}

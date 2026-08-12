@@ -14,7 +14,10 @@
 
 export interface RuleEvalRow {
   vendorId: number;
-  label: 'problematic' | 'sampled_clean';
+  /** documented_clean = gold cases with an independent CLEAN finding (the
+   *  hard-negative cohort), reported separately from sampled_clean per the
+   *  FEASIBILITY protocol. */
+  label: 'problematic' | 'sampled_clean' | 'documented_clean';
   firedRuleCount: number;
 }
 
@@ -25,11 +28,14 @@ export interface RuleEvalMetrics {
   clean_total: number;
   clean_flagged: number;
   false_positive_rate: number | null;
+  documented_clean_total: number;
+  documented_clean_flagged: number;
 }
 
 export function computeRuleMetrics(rows: RuleEvalRow[]): RuleEvalMetrics {
   const problem = rows.filter((r) => r.label === 'problematic');
   const clean = rows.filter((r) => r.label === 'sampled_clean');
+  const docClean = rows.filter((r) => r.label === 'documented_clean');
   const problemFlagged = problem.filter((r) => r.firedRuleCount > 0).length;
   const cleanFlagged = clean.filter((r) => r.firedRuleCount > 0).length;
   return {
@@ -39,7 +45,29 @@ export function computeRuleMetrics(rows: RuleEvalRow[]): RuleEvalMetrics {
     clean_total: clean.length,
     clean_flagged: cleanFlagged,
     false_positive_rate: clean.length ? cleanFlagged / clean.length : null,
+    documented_clean_total: docClean.length,
+    documented_clean_flagged: docClean.filter((r) => r.firedRuleCount > 0).length,
   };
+}
+
+/** Wilson 95% score interval — the honest companion to any small-n rate.
+ *  Returns null when n = 0. */
+export function wilson95(successes: number, n: number): { lo: number; hi: number } | null {
+  if (n === 0) return null;
+  const z = 1.959963984540054;
+  const p = successes / n;
+  const z2 = z * z;
+  const denom = 1 + z2 / n;
+  const centre = p + z2 / (2 * n);
+  const margin = z * Math.sqrt((p * (1 - p)) / n + z2 / (4 * n * n));
+  return { lo: Math.max(0, (centre - margin) / denom), hi: Math.min(1, (centre + margin) / denom) };
+}
+
+/** Render a rate with its raw counts and Wilson 95% CI: "80.0% (8/10, 95% CI 49.0–94.3%)". */
+export function pctWithCi(successes: number, n: number): string {
+  if (n === 0) return 'n/a';
+  const ci = wilson95(successes, n)!;
+  return `${((successes / n) * 100).toFixed(1)}% (${successes}/${n}, 95% CI ${(ci.lo * 100).toFixed(1)}–${(ci.hi * 100).toFixed(1)}%)`;
 }
 
 export interface BriefEvalRow {

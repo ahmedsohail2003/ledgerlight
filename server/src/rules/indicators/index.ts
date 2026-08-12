@@ -1,8 +1,13 @@
 /**
  * Red-flag indicator library. Definitions follow the Open Contracting
  * Partnership "Red flags in public procurement" guide (2024); each rule cites
- * its OCP-style indicator family. Thresholds are starting points, tuned
- * against the gold set as the eval matures.
+ * its OCP-style indicator family.
+ *
+ * Threshold honesty: values are OCP-guide-informed starting points chosen
+ * with the same public scandals the gold set documents in mind — which makes
+ * the rule-level eval IN-SAMPLE (labels are independent of the rules, but not
+ * of the design process). The eval report discloses this; a held-out case set
+ * is the planned fix, not a claimed one.
  */
 import type { Rule } from '../engine.js';
 
@@ -134,6 +139,7 @@ export const RULES: Rule[] = [
       FROM contracts c
       WHERE c.source = 'pd_official' AND c.number_of_bids = 1
         AND c.solicitation_procedure IN ('OB','TC','ST')
+        AND c.contract_date >= '2019-01-01'
         AND c.contract_value >= :minValue
       LIMIT 5000`,
     params: { minValue: 100_000 },

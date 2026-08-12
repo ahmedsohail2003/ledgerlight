@@ -90,19 +90,24 @@ export async function buildVendorEvidence(pool: Pool, vendorRef: string): Promis
     [vendor.id],
   );
 
+  // Counts come from rule_vendor_flags — the complete, uncapped per-vendor
+  // aggregate — never from the LIMIT-bounded example rows.
+  const [latestRun] = await pool.query<any[]>(
+    `SELECT run_id FROM rule_vendor_flags ORDER BY computed_at DESC LIMIT 1`,
+  );
+  const runId: string | null = latestRun[0]?.run_id ?? null;
   const [firedRules] = await pool.query<any[]>(
-    `SELECT r.rule_id, MIN(r.severity) AS severity, COUNT(*) AS findings
-     FROM rule_results r
-     WHERE r.vendor_id = ?
-       AND r.run_id = (SELECT run_id FROM rule_results ORDER BY computed_at DESC LIMIT 1)
-     GROUP BY r.rule_id`,
-    [vendor.id],
+    `SELECT rule_id, severity, finding_count AS findings
+     FROM rule_vendor_flags WHERE vendor_id = ? AND run_id = ?`,
+    [vendor.id, runId],
   );
   const fired: EvidencePack['fired_rules'] = [];
   for (const fr of firedRules) {
+    // Example evidence must come from the SAME run as the counts above —
+    // never from whatever row happens to be oldest in the table.
     const [ex] = await pool.query<any[]>(
-      `SELECT evidence FROM rule_results WHERE vendor_id = ? AND rule_id = ? ORDER BY id LIMIT 1`,
-      [vendor.id, fr.rule_id],
+      `SELECT evidence FROM rule_results WHERE vendor_id = ? AND rule_id = ? AND run_id = ? ORDER BY id LIMIT 1`,
+      [vendor.id, fr.rule_id, runId],
     );
     // The JSON column round-trips as a string when the insert was pre-stringified;
     // parse so evidence_ref paths can resolve into it.
@@ -160,14 +165,27 @@ export async function buildVendorEvidence(pool: Pool, vendorRef: string): Promis
   };
 }
 
-/** Resolve an evidence_ref JSON path like "top_contracts[2].contract_value". */
+/** Resolve an evidence_ref JSON path like "top_contracts[2].contract_value".
+ *  Traversal is restricted to OWN properties of plain objects/arrays: a ref
+ *  can never "ground" a figure to .length, constructor arity, or anything
+ *  else reachable through the prototype chain. */
 export function resolveEvidenceRef(pack: EvidencePack, ref: string): unknown {
   const parts = ref.match(/[^.[\]]+/g);
   if (!parts) return undefined;
-  let cur: any = pack;
+  let cur: unknown = pack;
   for (const part of parts) {
-    if (cur === null || cur === undefined) return undefined;
-    cur = cur[/^\d+$/.test(part) ? Number(part) : part];
+    if (cur === null || typeof cur !== 'object') return undefined;
+    const key: string | number = /^\d+$/.test(part) ? Number(part) : part;
+    if (Array.isArray(cur)) {
+      // Arrays admit numeric indices only — .length is an own property but
+      // it is bookkeeping, not evidence.
+      if (typeof key !== 'number') return undefined;
+    } else if (!Object.prototype.propertyIsEnumerable.call(cur, key)) {
+      // Own enumerable data properties only — no prototype walk, no
+      // non-enumerable internals.
+      return undefined;
+    }
+    cur = (cur as Record<string | number, unknown>)[key];
   }
   return cur;
 }

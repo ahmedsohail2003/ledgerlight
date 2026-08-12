@@ -159,6 +159,143 @@ describe('numeric-string evidence values (MySQL DECIMAL round-trip)', () => {
   });
 });
 
+describe('validator hardening — scale-shorthand gating', () => {
+  it('rejects a bare "19.1" with no unit word even though 19,100,000 is declared', () => {
+    const r = validateGrounding(brief({
+      text: 'The portfolio is roughly 19.1 across the period.',
+      figures: [{ evidence_ref: 'profile.total_value', value: 19100000 }],
+    }), pack);
+    expect(r.ok).toBe(false);
+    expect(r.reasons[0]).toContain('"19.1"');
+  });
+
+  it('rejects a %-token that only matches a declared figure at 1e6 scale', () => {
+    const packStr: EvidencePack = {
+      ...pack,
+      fired_rules: [{
+        rule_id: 'vendor_buyer_concentration', severity: 'medium', findings: 1,
+        example_evidence: { vendor_total: '22649438.00' },
+      }],
+    };
+    const r = validateGrounding(brief({
+      text: 'Concentration reached 22.6% at one buyer.',
+      provenance: 'rule_derived',
+      rule_ids: ['vendor_buyer_concentration'],
+      figures: [{ evidence_ref: 'fired_rules[0].example_evidence.vendor_total', value: 22649438 }],
+    }), packStr);
+    expect(r.ok).toBe(false);
+  });
+
+  it('rejects a bare small count landing in the ×1000 tolerance window of a declared value', () => {
+    const packVal: EvidencePack = {
+      ...pack,
+      top_contracts: [{ contract_id: 7, buyer: 'CBSA', contract_date: '2020-04-01', contract_value: 45100, description: 'IT services', source_link: null }],
+    };
+    const r = validateGrounding(brief({
+      text: 'There were 45 incidents of note.',
+      figures: [{ evidence_ref: 'top_contracts[0].contract_value', value: 45100 }],
+    }), packVal);
+    expect(r.ok).toBe(false);
+  });
+
+  it('still accepts "$2.35 million" when 2,350,000 is declared and the unit word is present', () => {
+    const r = validateGrounding(brief({
+      text: 'The largest award was $2.35 million.',
+      figures: [{ evidence_ref: 'top_contracts[0].contract_value', value: 2350000 }],
+    }), pack);
+    expect(r.ok).toBe(true);
+  });
+});
+
+describe('validator hardening — headline and limitations', () => {
+  it('rejects a hallucinated figure in the headline', () => {
+    const b = brief({ text: 'ok', figures: [] });
+    b.headline = 'Vendor took $980,000,000 from taxpayers.';
+    const r = validateGrounding(b, pack);
+    expect(r.ok).toBe(false);
+    expect(r.reasons[0]).toContain('headline');
+  });
+
+  it('accepts a headline figure that matches a declared claim figure', () => {
+    const b = brief({
+      text: 'Total value is $19,100,000.',
+      figures: [{ evidence_ref: 'profile.total_value', value: 19100000 }],
+    });
+    b.headline = 'Contracts worth $19,100,000 warrant review.';
+    expect(validateGrounding(b, pack).ok).toBe(true);
+  });
+
+  it('rejects a hallucinated figure in limitations', () => {
+    const b = brief({ text: 'ok', figures: [] });
+    b.limitations = 'Only 3,500 of the rows were inspected.';
+    const r = validateGrounding(b, pack);
+    expect(r.ok).toBe(false);
+    expect(r.reasons[0]).toContain('limitations');
+  });
+
+  it('exempts a verbatim quote of the data_coverage_note in limitations', () => {
+    const packNote: EvidencePack = {
+      ...pack,
+      data_coverage_note: 'Data covers contracts over $10,000 only.',
+    };
+    const b = brief({ text: 'ok', figures: [] });
+    b.limitations = `Data covers contracts over $10,000 only. Names are normalized conservatively.`;
+    expect(validateGrounding(b, packNote).ok).toBe(true);
+  });
+});
+
+describe('validator hardening — vendor names containing digits', () => {
+  it('does not treat digits in the vendor\'s own name as figures', () => {
+    const packNamed: EvidencePack = {
+      ...pack,
+      vendor: { id: 9, canonical_name: 'PEDABUN 35 NURSING PC' },
+    };
+    const b = brief({
+      text: 'PEDABUN 35 NURSING PC holds 10 contracts in the loaded data.',
+      figures: [{ evidence_ref: 'profile.contract_count', value: 10 }],
+    });
+    b.target = 'PEDABUN 35 NURSING PC';
+    expect(validateGrounding(b, packNamed).ok).toBe(true);
+  });
+});
+
+describe('validator hardening — evidence_ref traversal', () => {
+  it('rejects grounding a figure to a string .length', () => {
+    const r = validateGrounding(brief({
+      text: 'Analysis covered 14 dimensions.',
+      figures: [{ evidence_ref: 'vendor.canonical_name.length', value: 14 }],
+    }), pack);
+    expect(r.ok).toBe(false);
+    expect(r.reasons[0]).toContain('no numeric value exists');
+  });
+
+  it('rejects grounding a figure to an array length', () => {
+    const r = validateGrounding(brief({
+      text: 'There is 1 buyer of note.',
+      figures: [{ evidence_ref: 'by_buyer.length', value: 1 }],
+    }), pack);
+    expect(r.ok).toBe(false);
+  });
+});
+
+describe('validator hardening — assessment consistency', () => {
+  it('rejects no_indicators_found when rules fired', () => {
+    const b = brief({ text: 'ok', figures: [] });
+    b.overall_assessment = 'no_indicators_found';
+    const r = validateGrounding(b, pack);
+    expect(r.ok).toBe(false);
+    expect(r.reasons[0]).toContain('no_indicators_found');
+  });
+
+  it('rejects indicators_warrant_review when nothing fired', () => {
+    const packNone: EvidencePack = { ...pack, fired_rules: [] };
+    const b = brief({ text: 'ok', figures: [] });
+    b.overall_assessment = 'indicators_warrant_review';
+    const r = validateGrounding(b, packNone);
+    expect(r.ok).toBe(false);
+  });
+});
+
 describe('percent rendering of declared fractions', () => {
   it('accepts "56.9%" when the evidence declares 0.569', () => {
     const packWithShare: EvidencePack = {

@@ -53,8 +53,10 @@ export function buildFallbackBrief(target: string, pack: EvidencePack): Brief {
 
   return {
     target,
+    // Digit-free by design: the grounding validator scans headlines for
+    // numeric tokens, and the rule count is already declared claim-by-claim.
     headline: pack.fired_rules.length > 0
-      ? `${pack.vendor.canonical_name}: ${pack.fired_rules.length} deterministic indicator(s) warrant review.`
+      ? `${pack.vendor.canonical_name}: deterministic indicators warrant review.`
       : `${pack.vendor.canonical_name}: no deterministic indicators fired on the loaded data.`,
     overall_assessment: pack.fired_rules.length > 0 ? 'indicators_warrant_review' : 'no_indicators_found',
     claims,

@@ -1,8 +1,14 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+
+// Workspace scripts run with cwd=server/, so bare `import 'dotenv/config'`
+// would silently miss the repo-root .env the README tells you to create.
+// Load the root .env explicitly, then any server/.env; exported vars win over both.
+dotenv.config({ path: path.join(REPO_ROOT, '.env') });
+dotenv.config();
 
 function env(name: string, fallback?: string): string {
   const v = process.env[name] ?? fallback;

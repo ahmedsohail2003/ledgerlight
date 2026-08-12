@@ -10,6 +10,11 @@ services:
       - '3306:3306'
     volumes:
       - mysql-data:/var/lib/mysql
+      # Applied automatically (as root) on first init, AFTER the entrypoint
+      # creates MYSQL_USER — so the least-privilege grants in grants.sql are
+      # actually in effect for the identity the app connects as, without a
+      # manual `mysql -u root` step.
+      - ./server/src/db/grants.sql:/docker-entrypoint-initdb.d/90-grants.sql:ro
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 5s

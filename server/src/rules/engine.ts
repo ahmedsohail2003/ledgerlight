@@ -27,7 +27,16 @@ export interface Rule {
 export interface RuleRunSummary {
   ruleId: string;
   status: 'ran' | 'dormant';
+  /** True total findings across ALL qualifying rows (uncapped). */
   findings: number;
+  /** Example rows stored in rule_results (bounded by the rule's LIMIT). */
+  examples: number;
+}
+
+/** The trailing LIMIT bounds stored example rows only; the flag table is
+ *  computed over the full result set with this cap stripped. */
+function withoutTrailingLimit(sql: string): string {
+  return sql.replace(/\bLIMIT\s+\d+\s*$/i, '');
 }
 
 export async function runRules(pool: Pool, rules: Rule[], runId: string, sources: Set<string>): Promise<RuleRunSummary[]> {
@@ -36,7 +45,7 @@ export async function runRules(pool: Pool, rules: Rule[], runId: string, sources
 
   for (const rule of rules) {
     if (rule.requires === 'pd_official' && !hasOfficial) {
-      summaries.push({ ruleId: rule.id, status: 'dormant', findings: 0 });
+      summaries.push({ ruleId: rule.id, status: 'dormant', findings: 0, examples: 0 });
       continue;
     }
     // mysql2's QueryValues typing predates named-placeholder objects; runtime supports them.
@@ -50,12 +59,33 @@ export async function runRules(pool: Pool, rules: Rule[], runId: string, sources
          JSON.stringify(row)],
       );
     }
+
+    // Complete per-vendor flags, uncapped: whether a vendor is "flagged" (and
+    // its finding count) must never depend on which rows fit under the
+    // example cap. Eval metrics and evidence packs read THIS table.
+    await pool.query({
+      sql: `INSERT INTO rule_vendor_flags (run_id, rule_id, severity, vendor_id, finding_count)
+            SELECT :__runId, :__ruleId, :__severity, sub.vendor_id, COUNT(*)
+            FROM (${withoutTrailingLimit(rule.sql)}) AS sub
+            WHERE sub.vendor_id IS NOT NULL
+            GROUP BY sub.vendor_id`,
+      values: { ...rule.params, __runId: runId, __ruleId: rule.id, __severity: rule.severity } as any,
+      namedPlaceholders: true,
+    });
+
+    const [totals] = await pool.query<any[]>(
+      `SELECT COUNT(*) AS vendors, COALESCE(SUM(finding_count), 0) AS findings
+       FROM rule_vendor_flags WHERE run_id = ? AND rule_id = ?`,
+      [runId, rule.id],
+    );
+    const totalFindings = Number(totals[0].findings);
+
     await pool.query(
       `INSERT INTO audit_log (actor, action, entity, entity_id, detail) VALUES (?, ?, ?, ?, ?)`,
       ['rules:engine', 'rule_run', 'rule', rule.id,
-       JSON.stringify({ runId, findings: rows.length, params: rule.params })],
+       JSON.stringify({ runId, findings: totalFindings, examples: rows.length, flaggedVendors: Number(totals[0].vendors), params: rule.params })],
     );
-    summaries.push({ ruleId: rule.id, status: 'ran', findings: rows.length });
+    summaries.push({ ruleId: rule.id, status: 'ran', findings: totalFindings, examples: rows.length });
   }
   return summaries;
 }

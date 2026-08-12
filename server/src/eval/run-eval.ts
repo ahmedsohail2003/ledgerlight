@@ -9,7 +9,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getPool, getRoPool, closePool } from '../db/pool.js';
-import { computeRuleMetrics, computeAgentMetrics, pct, type RuleEvalRow, type BriefEvalRow } from './metrics.js';
+import { computeRuleMetrics, computeAgentMetrics, pct, pctWithCi, type RuleEvalRow, type BriefEvalRow } from './metrics.js';
 import { BriefSchema } from '../agent/brief-schema.js';
 import { validateGrounding } from '../agent/grounding.js';
 import { buildVendorEvidence } from '../agent/tools.js';
@@ -31,29 +31,54 @@ async function main(): Promise<void> {
      WHERE g.label = 'problematic' AND g.vendor_id IS NOT NULL`,
   );
 
-  // Sampled negatives per the documented protocol: active vendors (>= N
-  // contracts) absent from every adverse gold case. Deterministic ORDER BY
-  // keeps runs reproducible.
+  // Hard-negative cohort: gold cases with an independent CLEAN finding that
+  // link to real vendors. Reported separately from sampled_clean (FEASIBILITY:
+  // "report documented-clean and sampled-clean separately"). May be empty —
+  // the report says so honestly rather than pretending the control ran.
+  const [documentedClean] = await pool.query<any[]>(
+    `SELECT DISTINCT g.vendor_id AS vendorId, v.canonical_name AS name
+     FROM gold_labels g JOIN vendors v ON v.id = g.vendor_id
+     WHERE g.label = 'clean' AND g.vendor_id IS NOT NULL`,
+  );
+
+  // Sampled negatives per the FEASIBILITY negative-sampling protocol:
+  //   - active (>= N contracts) and absent from EVERY gold case (any label);
+  //   - competitive footprint: >= 3 rows competitively awarded (OB/TC) with
+  //     number_of_bids >= 3;
+  //   - normal amendment profile: no procurement with more than one amendment
+  //     row or >= 20% value growth.
+  // (The "positively-audited buyer+period" refinement has no data source yet
+  // and is documented as future work.) Deterministic ORDER BY keeps runs
+  // reproducible.
   const [cleanVendors] = await pool.query<any[]>(
     `SELECT v.id AS vendorId, v.canonical_name AS name, COUNT(c.id) AS n
      FROM vendors v
      JOIN contracts c ON c.vendor_id = v.id
      WHERE v.id NOT IN (SELECT vendor_id FROM gold_labels WHERE vendor_id IS NOT NULL)
+       AND NOT EXISTS (
+         SELECT 1 FROM contracts a
+         WHERE a.vendor_id = v.id AND a.procurement_id IS NOT NULL AND a.original_value > 0
+         GROUP BY a.procurement_id
+         HAVING COUNT(*) > 2 OR MAX(a.contract_value) / MIN(a.original_value) >= 1.2
+       )
      GROUP BY v.id, v.canonical_name
      HAVING COUNT(c.id) >= ?
+        AND SUM(CASE WHEN c.solicitation_procedure IN ('OB','TC') AND c.number_of_bids >= 3 THEN 1 ELSE 0 END) >= 3
      ORDER BY MD5(CONCAT(v.id, 'ledgerlight-eval-seed')) LIMIT ?`,
     [MIN_CONTRACTS_FOR_CLEAN, CLEAN_SAMPLE_SIZE],
   );
 
+  // Flags come from rule_vendor_flags — the complete per-vendor aggregate
+  // computed without the example-row caps.
   const [latestRun] = await pool.query<any[]>(
-    `SELECT run_id FROM rule_results ORDER BY computed_at DESC LIMIT 1`,
+    `SELECT run_id FROM rule_vendor_flags ORDER BY computed_at DESC LIMIT 1`,
   );
   const runId = latestRun[0]?.run_id ?? null;
 
   async function firedCount(vendorId: number): Promise<number> {
     if (!runId) return 0;
     const [r] = await pool.query<any[]>(
-      `SELECT COUNT(DISTINCT rule_id) AS n FROM rule_results WHERE vendor_id = ? AND run_id = ?`,
+      `SELECT COUNT(DISTINCT rule_id) AS n FROM rule_vendor_flags WHERE vendor_id = ? AND run_id = ?`,
       [vendorId, runId],
     );
     return Number(r[0].n);
@@ -65,6 +90,9 @@ async function main(): Promise<void> {
   }
   for (const v of cleanVendors) {
     ruleRows.push({ vendorId: v.vendorId, label: 'sampled_clean', firedRuleCount: await firedCount(v.vendorId) });
+  }
+  for (const v of documentedClean) {
+    ruleRows.push({ vendorId: v.vendorId, label: 'documented_clean', firedRuleCount: await firedCount(v.vendorId) });
   }
   const ruleMetrics = computeRuleMetrics(ruleRows);
 
@@ -93,7 +121,9 @@ async function main(): Promise<void> {
     const parsed = BriefSchema.safeParse(typeof row.brief === 'string' ? JSON.parse(row.brief) : row.brief);
     let ok = parsed.success;
     if (parsed.success) {
-      const pack = await buildVendorEvidence(pool, row.target_ref);
+      // Same SELECT-only identity the agent path uses — the re-audit must not
+      // be the one thing quietly running on the write pool.
+      const pack = await buildVendorEvidence(getRoPool(), row.target_ref);
       ok = validateGrounding(parsed.data, pack).ok;
     }
     agentRows.push({ investigationId: row.id, mode: row.mode, attempts: row.attempts, groundingOk: ok });
@@ -115,14 +145,26 @@ async function main(): Promise<void> {
       : 'Agent metrics cover live model briefs re-audited against a freshly built evidence pack.',
   ].join(' ');
 
+  const hardNegativeLine = ruleMetrics.documented_clean_total > 0
+    ? `- Hard-negative control (documented-clean gold vendors): ${ruleMetrics.documented_clean_flagged}/${ruleMetrics.documented_clean_total} flagged — flags here measure over-accusation risk against independently-audited-clean cases.`
+    : '- Hard-negative control: 0 documented-clean gold cases currently link to vendors in the data (the vaccine-APA case is program-level), so this control has NOT been exercised yet.';
+
   const report = [
     '# Ledgerlight evaluation report',
     '',
-    `Latest rule run: \`${runId ?? 'none'}\` · gold problematic vendors: ${ruleMetrics.problematic_total} · sampled clean: ${ruleMetrics.clean_total}`,
+    `Latest rule run: \`${runId ?? 'none'}\` · gold problematic vendors: ${ruleMetrics.problematic_total} · sampled clean: ${ruleMetrics.clean_total} · documented clean: ${ruleMetrics.documented_clean_total}`,
     '',
-    '## Rule-level (non-circular: labels from OAG/OPO/suspensions/journalism)',
-    `- Recall over problematic vendors: **${pct(ruleMetrics.recall)}** (${ruleMetrics.problematic_flagged}/${ruleMetrics.problematic_total} flagged by ≥1 indicator)`,
-    `- False-positive rate over sampled clean vendors: **${pct(ruleMetrics.false_positive_rate)}** (${ruleMetrics.clean_flagged}/${ruleMetrics.clean_total})`,
+    '## Rule-level (non-circular labels: OAG/OPO/suspensions/journalism)',
+    `- Recall over problematic vendors: **${pctWithCi(ruleMetrics.problematic_flagged, ruleMetrics.problematic_total)}**`,
+    `- False-positive rate over sampled clean vendors: **${pctWithCi(ruleMetrics.clean_flagged, ruleMetrics.clean_total)}**`,
+    hardNegativeLine,
+    '',
+    'Small-n honesty: with n this size the confidence intervals above are wide —',
+    'treat these as screening-level evidence of signal, not calibrated performance',
+    'numbers. The problematic cohort is also cluster-correlated (several vendors',
+    'share the ArriveCAN scandal), and indicator thresholds were designed against',
+    'the same public cases the gold set draws from (labels are independent of the',
+    'rules, but this is an in-sample evaluation — there is no held-out set yet).',
     '',
     '## Agent-level (grounding audit of every stored brief)',
     `- Briefs audited: ${agentMetrics.briefs_total} (model: ${agentMetrics.model_briefs}, fallback rate ${pct(agentMetrics.fallback_rate)})`,

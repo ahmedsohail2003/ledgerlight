@@ -25,12 +25,29 @@ export function getPool(): mysql.Pool {
 /**
  * SELECT-only connection for everything the LLM agent can influence
  * (evidence assembly). Backed by a MySQL user with no write grants — even a
- * fully hijacked prompt cannot mutate state through this pool. Falls back to
- * the main pool when DB_RO_USER is unset (documented gap for bare setups).
+ * fully hijacked prompt cannot mutate state through this pool.
+ *
+ * Fails CLOSED: if DB_RO_USER is unset the process refuses to start rather
+ * than silently degrading to the full-privilege pool. Set
+ * ALLOW_SINGLE_DB_IDENTITY=1 to opt out explicitly (demo-only), which is
+ * loudly logged so the downgrade is never invisible.
  */
 export function getRoPool(): mysql.Pool {
   const roUser = process.env.DB_RO_USER;
-  if (!roUser) return getPool();
+  if (!roUser) {
+    if (process.env.ALLOW_SINGLE_DB_IDENTITY === '1') {
+      console.warn(
+        '[pool] ALLOW_SINGLE_DB_IDENTITY=1: agent evidence path is running on the ' +
+        'read-write identity. The SELECT-only containment guarantee is OFF.',
+      );
+      return getPool();
+    }
+    throw new Error(
+      'DB_RO_USER is not set. The agent evidence path requires the SELECT-only ' +
+      'identity (run server/src/db/grants.sql, then set DB_RO_USER=ledgerlight_ro ' +
+      'and DB_RO_PASSWORD). To run a demo without it, set ALLOW_SINGLE_DB_IDENTITY=1.',
+    );
+  }
   if (!roPool) {
     roPool = mysql.createPool({
       ...config.db,

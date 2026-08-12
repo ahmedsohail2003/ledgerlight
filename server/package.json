@@ -16,7 +16,8 @@
     "investigate": "tsx src/agent/run.ts",
     "api": "tsx src/api/server.ts",
     "seed:users": "tsx src/api/seed-users.ts",
-    "eval": "tsx src/eval/run-eval.ts"
+    "eval": "tsx src/eval/run-eval.ts",
+    "eval:redteam": "tsx src/eval/red-team.ts"
   },
   "dependencies": {
     "@google/genai": "^2.10.0",

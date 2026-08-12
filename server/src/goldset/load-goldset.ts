@@ -45,8 +45,16 @@ async function main(): Promise<void> {
   for (const c of cases) {
     const label = VALID_LABELS.has(c.label) ? c.label : 'alleged';
 
+    // Cases the research file marks match_confidence "none" must never link:
+    // their adverse finding concerns contracts OUTSIDE this dataset (e.g. the
+    // CEBA/Accenture case is about EDC contracts), so linking would attach the
+    // label to unrelated rows and contaminate the quantitative eval. They stay
+    // as narrative context with vendor_id NULL.
+    const matchConfidence = c.match?.match_confidence ?? null;
+    const linkable = matchConfidence !== 'none';
+
     // Resolve vendor via curated aliases first, falling back to the raw string.
-    const aliases = CASE_VENDOR_ALIASES[c.case_id] ?? [c.vendor];
+    const aliases = linkable ? (CASE_VENDOR_ALIASES[c.case_id] ?? [c.vendor]) : [];
     let vendorId: number | null = null;
     let matchedAlias: string | null = null;
     let rowCount = 0;

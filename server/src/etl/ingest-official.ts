@@ -32,7 +32,11 @@ async function resetData(): Promise<void> {
   // deliberately lacks — run it on the admin connection.
   const admin = getAdminPool();
   await admin.query('SET FOREIGN_KEY_CHECKS = 0');
-  for (const t of ['review_cases', 'investigations', 'rule_results', 'contracts', 'vendor_aliases', 'vendors', 'buyers']) {
+  // gold_labels MUST be truncated with vendors: vendor ids are reassigned by
+  // first-seen CSV order on reload, so keeping old rows would silently
+  // re-point every scandal label at an arbitrary different vendor. Re-run
+  // `npm run goldset:load` after the ETL (the console reminder below).
+  for (const t of ['review_cases', 'investigations', 'rule_results', 'rule_vendor_flags', 'gold_labels', 'contracts', 'vendor_aliases', 'vendors', 'buyers']) {
     await admin.query(`TRUNCATE TABLE ${t}`);
   }
   await admin.query('SET FOREIGN_KEY_CHECKS = 1');
@@ -125,6 +129,7 @@ async function main(): Promise<void> {
     ['etl:ingest-official', JSON.stringify({ read, inserted, skipped, vendors: vendorIds.size, buyers: buyerIds.size })],
   );
   console.log(`done: read=${read} inserted=${inserted} skipped=${skipped}`);
+  console.log('NEXT: re-run `npm run goldset:load` (labels were reset with the vendor ids) and `npm run rules:run`.');
   await closePool();
 }
 
