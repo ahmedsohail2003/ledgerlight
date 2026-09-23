@@ -1,5 +1,7 @@
 # Ledgerlight
 
+**Live project page:** [ahmedsohail2003.github.io/ledgerlight](https://ahmedsohail2003.github.io/ledgerlight/)
+
 **AI-assisted oversight of real Canadian public procurement — with an AI that is structurally forbidden from making things up.**
 
 Ledgerlight loads the Government of Canada's entire [Proactive Disclosure of Contracts over $10,000](https://open.canada.ca/data/en/dataset/d8f85d91-7dec-4fd1-8055-483b77225d8b) dataset (1.31 million real contract rows), runs deterministic red-flag indicators derived from the [Open Contracting Partnership's red-flag guide](https://www.open-contracting.org/wp-content/uploads/2024/12/OCP2024-RedFlagProcurement-1.pdf) over it, and puts a grounding-validated Gemini investigator on top. Ask it about a vendor and it writes a plain-language **integrity brief** in which:
